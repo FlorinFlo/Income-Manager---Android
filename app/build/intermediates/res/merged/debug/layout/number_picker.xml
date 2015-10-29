@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"    
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    
+    
+    <NumberPicker android:id="@+id/np"      
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"      
+      android:layout_centerInParent="true" 
+      android:layout_alignParentTop="true"
+      
+      />
+     <LinearLayout  
+        style="?android:attr/buttonBarStyle"       
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"        
+        android:orientation="horizontal"       
+       	android:padding="0dp"
+       	android:layout_below="@id/np"
+         >
+        <!--  
+         -->
+  	<Button 
+  	    android:id="@+id/btn_cancel"
+  	    android:layout_width="wrap_content"
+  	    android:layout_height="wrap_content"
+  	    android:text="@string/cancel"
+  	   	android:layout_weight="1" 
+  	   	style="?android:attr/borderlessButtonStyle"
+  	    
+  	    />
+    <!-- android:layout_gravity="left|center" -->
+  	<Button 
+  	    android:id="@+id/btn_ok"
+  	    android:layout_width="wrap_content"
+  	    android:layout_height="wrap_content"
+  	    android:text="@string/Ok"
+  	    
+  	    android:layout_weight="1"  	 
+  	    style="?android:attr/borderlessButtonStyle"
+  	    />
+  	<!-- android:layout_gravity="right|center"
+  	 -->
+  	</LinearLayout>
+    
+  	
+</RelativeLayout><!-- From: file:/D:/Android%20Studio%20Projects/IncomeManager1/app/src/main/res/layout/number_picker.xml -->

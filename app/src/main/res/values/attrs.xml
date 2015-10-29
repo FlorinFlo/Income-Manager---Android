@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="PieGraph">
+        <attr name="pieInnerCircleRatio" format="integer"/>
+        <attr name="pieSlicePadding" format="dimension"/>
+    </declare-styleable>
+
+    <declare-styleable name="LineGraph">
+        <attr name="lineStrokeColor" format="color"/>
+        <attr name="lineAxisColor" format="color"/>
+        <attr name="lineStrokeWidth" format="dimension"/>
+        <attr name="lineStrokeSpacing" format="dimension"/>
+        <attr name="lineUseDip" format="boolean"/>
+        <attr name="lineBackground" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="BarGraph">
+        <attr name="barAxisColor" format="color"/>
+        <attr name="orientation" format="enum">
+            <enum name="horizontal" value="0"/>
+            <enum name="vertical" value="1"/>
+        </attr>
+        <attr name="barShowAxis" format="boolean"/>
+        <attr name="barShowAxisLabel" format="boolean"/>
+        <attr name="barShowText" format="boolean"/>
+        <attr name="barShowPopup" format="boolean"/>
+    </declare-styleable>
+
+    <declare-styleable name="ColorPicker">
+        <attr name="color_wheel_radius" format="dimension" />
+        <attr name="color_wheel_thickness" format="dimension" />
+        <attr name="color_center_radius" format="dimension" />
+        <attr name="color_center_halo_radius" format="dimension"/>
+        <attr name="color_pointer_radius" format="dimension" />
+        <attr name="color_pointer_halo_radius" format="dimension" />
+    </declare-styleable>
+    <declare-styleable name="ColorBars">
+        <attr name="bar_thickness" format="dimension" />
+        <attr name="bar_length" format="dimension" />
+        <attr name="bar_pointer_radius" format="dimension" />
+        <attr name="bar_pointer_halo_radius" format="dimension" />
+        <attr name="bar_orientation_horizontal" format="boolean" />
+    </declare-styleable>
+
+</resources>

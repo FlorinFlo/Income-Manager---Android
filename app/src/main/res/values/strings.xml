@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Income Manager</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_add">Add income</string>
+    <string name="action_remove">Add expense</string>
+	<string name="action_save">Save</string>
+	<string name="action_cancel">Cancel</string>
+	<string name="text_balance">Current balance : </string>
+    
+    
+    <string name="title_activity_income_">Income</string>
+    <string name="income">Income</string>
+    <string name="title_activity_expenses">Expenses</string>
+    <string name="expenses">Expenses </string>
+	<string name="account">Account </string>
+	<string name="name">Name </string>
+	<string name="category">Category</string>
+	<string name="amount">Amount</string>
+	<string name="notes">Notes</string>
+	<string name="date">Date</string>
+	<string name="bills">Bill</string>
+	<string name="expense">Expense</string>
+	<string name="text_payment_status">Payment\n status</string>
+	<string name="text_reminder">Reminder</string>
+	<string name="rule">Rule :</string>
+	<string name="repeat">Repeat :</string>
+	<string name="Ok">Ok</string>
+	<string name="cancel">Cancel</string>
+	<string name="add_income">Add \n income</string>
+	
+	<string name="text_account">Account :</string>
+	<string name="text_name">Name :</string>
+	<string name="text_category">Category :</string>
+	<string name="text_amount">Amount :</string>
+	<string name="text_notes">Notes :</string>
+	<string name="text_date">Date :</string>
+	<string name="fragment1">Tab1</string>
+	<string name="fragment2">Tab2</string>
+	<string name="add_category">Add \n category</string>
+	
+	<string-array name="chart">
+	    <item>Expenses \nthis month</item>
+	    <item>Expenses \nlast month</item>
+	    <item>Expenses \nover the year</item>
+	   	<item>Expenses \nby category </item>
+	</string-array>
+
+	<string-array name="budget_list">
+		<item>Current balance</item>
+		<item>Today expenses</item>
+		<item>This week incomes</item>
+		<item>This month incomes</item>
+		<item>This week expenses</item>
+		<item>This month expenses</item>
+	</string-array>
+
+	
+	<string-array name="paid_status">
+	    <item>Paid</item>
+	    <item>Unpaid</item>
+	</string-array>
+	
+	<string-array name="accounts"> 
+	    <item>My account</item>
+	    <item>Your account</item>
+	    <item>Your account2</item>
+	    <item>Your account3</item>
+	     <item>Your account4</item>
+	</string-array>
+	
+	<string-array name="reminders"> 
+	    <item>Don\'t remind</item>
+	    <item>Same day</item>
+	    <item>One day before</item>
+	    <item>One week before</item>
+	     <item>Each month</item>
+	</string-array>
+	<string-array name="rules">
+	    <item>Monthly</item>
+	    <item>Biweekly</item>
+	    <item>Weekly</item>
+	</string-array>
+
+	
+</resources>

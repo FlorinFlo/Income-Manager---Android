@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/btn_Categories"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:text="Edit categories"
+            android:onClick="openEditCat"
+            android:background="@drawable/mybutton"/>
+
+        <Button
+            android:id="@+id/btn_notefications"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/mybutton"
+            android:text="Edit notifications" />
+
+        <Button
+            android:id="@+id/btn_currency"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/mybutton"
+            android:text="Edit currency" />
+
+        <Button
+            android:id="@+id/btn_format"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+             android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/mybutton"
+            android:text="Date time format" />
+
+        <Button
+            android:id="@+id/btn_language"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+             android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/mybutton"
+            android:text="Language" />
+
+        <Button
+            android:id="@+id/btn_help"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+             android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/mybutton"
+            android:text="Help" />
+    </LinearLayout>
+
+</ScrollView><!-- From: file:/D:/Android%20Studio%20Projects/IncomeManager1/app/src/main/res/layout/settings_activity.xml -->

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:id="@+id/new_cat_dialog">
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+
+        <EditText
+            android:id="@+id/categoryName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Category name"
+            android:layout_toRightOf="@+id/picker"
+            android:background="@android:drawable/dialog_holo_light_frame"
+
+
+
+
+            />
+        <graphics.ColorPicker
+            android:id="@+id/picker"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="left"
+            android:padding="20dp"
+            />
+
+        <graphics.SVBar
+            android:id="@+id/svbar"
+            android:layout_width="200dp"
+            android:layout_height="112dp"
+            android:layout_gravity="left"
+            android:layout_margin="8dip"
+            android:layout_toRightOf="@+id/picker"
+            android:layout_below="@+id/categoryName"
+            />
+        <graphics.OpacityBar
+            android:id="@+id/opacityBar"
+            android:layout_width="200dp"
+            android:layout_height="112dp"
+            android:layout_gravity="left"
+            android:layout_margin="8dip"
+            android:layout_toRightOf="@+id/picker"
+            android:layout_below="@+id/svbar"
+            />
+
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:measureWithLargestChild="true"
+            android:orientation="horizontal"
+            android:layout_below="@+id/picker"
+            style="?android:attr/buttonBarButtonStyle"
+
+
+            >
+
+            <Button
+                android:id="@+id/cat_OK"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text= "Ok"
+                android:background="@android:drawable/dialog_holo_light_frame"
+                style="?android:attr/buttonBarButtonStyle"
+                />
+
+            <Button
+
+                android:id="@+id/cat_Cancel"
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Cancel"
+                android:background="@android:drawable/dialog_holo_light_frame"
+                style="?android:attr/buttonBarButtonStyle"/>
+
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+
+
+
+</LinearLayout>
+<!-- From: file:/D:/Android%20Studio%20Projects/IncomeManager1/app/src/main/res/layout/new_cat_dialog.xml -->

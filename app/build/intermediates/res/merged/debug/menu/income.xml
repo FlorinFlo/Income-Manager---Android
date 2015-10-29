@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.incomemanager.Income_Activity" >
+
+  
+
+</menu>
+<!-- From: file:/D:/Android%20Studio%20Projects/IncomeManager1/app/src/main/res/menu/income.xml -->
