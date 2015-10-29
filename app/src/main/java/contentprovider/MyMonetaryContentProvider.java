@@ -507,7 +507,7 @@ public class MyMonetaryContentProvider extends ContentProvider {
 	}
 
 	public ArrayList<Money> getExpensesGivingMonth(int month){
-		Log.w("?????????????????????","ZZZZZZZZZZZZZZZZZZ"+month);
+
 		ArrayList<Money> expenses=new ArrayList<>();
 		Cursor cursor=db.query(MonetaryTable.TABLE_MONETARY,
 				new String[]{MonetaryTable.COLUMN_ID, MonetaryTable.COLUMN_CATEGORY,
