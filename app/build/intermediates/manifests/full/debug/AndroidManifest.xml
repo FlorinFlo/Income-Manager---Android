@@ -53,8 +53,12 @@
                 android:value="incomemanager.MainActivity" />
         </activity>
         <activity android:name="incomemanager.RescheduleAlarm_Activity" />
-
-        <receiver android:name="service.AlarmReceiver" />
+        <!-- Broadcast reciver in case of reboot -->
+        <receiver android:name="service.AlarmReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <provider
             android:name="contentprovider.MyMonetaryContentProvider"

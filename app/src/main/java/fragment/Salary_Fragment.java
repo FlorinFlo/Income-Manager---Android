@@ -8,8 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -19,6 +21,8 @@ import com.example.incomemanager.R;
 
 import java.util.Calendar;
 
+import incomemanager.Income_Activity;
+import model.Category;
 import service.Service;
 
 public class Salary_Fragment extends Fragment {
@@ -28,6 +32,7 @@ public class Salary_Fragment extends Fragment {
 	private EditText repeat;
 	private Switch repeatSwitch;
 	private ToggleButton togggle;
+	private Spinner spinnerCat;
 	private TextView timeNow;
 	private int counter = 0;
 	private int hour;
@@ -35,6 +40,7 @@ public class Salary_Fragment extends Fragment {
 	private Calendar calendar;
 	private boolean repeatAlarm=false;
 	private OnDataPass dataPass;
+
 	
 	private Service service=Service.getInstance();
 	//private NumberPicker no;
@@ -88,6 +94,23 @@ public class Salary_Fragment extends Fragment {
 				}
 
 
+			}
+		});
+		spinnerCat= (Spinner) getView().findViewById(R.id.salary_category);
+		service.populateSpinnerCategory(spinnerCat,getActivity());
+		spinnerCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+			Category category;
+
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				category= (Category) parent.getItemAtPosition(position);
+			((Income_Activity)getActivity()).setCategory(category.getCategory_id());
+		}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+				category= (Category) parent.getItemAtPosition(0);
+				((Income_Activity)getActivity()).setCategory(category.getCategory_id());
 			}
 		});
 

@@ -5,9 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import java.util.Calendar;
-import java.util.Date;
-
+import model.Money;
 import service.Service;
 
 /**
@@ -18,34 +16,18 @@ public class RescheduleAlarm_Activity extends Activity {
     private Service service=Service.getInstance();
     @Override
     public void onCreate(Bundle savedInstanceState){
+
         super.onCreate(savedInstanceState);
+        Log.w("Rescheduling","YEs");
         Bundle extra=getIntent().getExtras();
-        String rule=extra.getString("rule");
-        String message=extra.getString("message");
+        Money money=extra.getParcelable("Money");
+        String rule=money.getRule();
+        String message=money.getNotes();
         int hour=extra.getInt("hour");
         int minute=extra.getInt("minute");
-        String dateString=extra.getString("date");
-        Date date= service.returnDateFromString(dateString);
-        Calendar calendar=Calendar.getInstance();
-        calendar.setTime(date);
+        String dateString=service.getStringFromDate(money.getDate());
 
-        if(rule.equals("Monthly")){
-            calendar.add(Calendar.MONTH,1);
-            service.createAlarm(this,rule,service.getStringFromCalendar(calendar),message,hour,minute);
-            Log.w("RULE EQUALS","Monthly");
-
-        }else if(rule.equals("Biweekly")){
-            calendar.add(Calendar.WEEK_OF_YEAR,2);
-            service.createAlarm(this, rule, service.getStringFromCalendar(calendar), message, hour, minute);
-            Log.w("RULE EQUALS","Biweekly");
-        }else if (rule.equals("Weekly")){
-            calendar.add(Calendar.WEEK_OF_YEAR,1);
-            service.createAlarm(this, rule,service.getStringFromCalendar(calendar),message,hour,minute);
-            Log.w("RULE EQUALS","weekly");
-        }else{
-
-        }
-
+        service.createAlarm(this,money,hour,minute);
 
         Intent finalIntent=new Intent(this,MainActivity.class);
         startActivity(finalIntent);

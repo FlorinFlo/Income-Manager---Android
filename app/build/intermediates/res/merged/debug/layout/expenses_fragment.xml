@@ -19,13 +19,12 @@
             android:text="@string/text_category" />
 
         <Spinner
-            android:id="@+id/spinner_category"
+            android:id="@+id/spinner_category_expenses"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/text_category"
             android:layout_marginRight="15dp"
             android:layout_toRightOf="@+id/text_category"
-
             android:prompt="@string/category" />
 
         <Button
@@ -52,7 +51,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/text_expenses_amount"
-            android:layout_alignLeft="@+id/spinner_category"
+            android:layout_alignLeft="@+id/spinner_category_income"
             android:layout_toRightOf="@+id/text_expenses_amount"
             android:gravity="center"
             android:hint="@string/amount"
@@ -74,7 +73,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/text_notes"
-            android:layout_alignLeft="@+id/spinner_category"
+            android:layout_alignLeft="@+id/spinner_category_income"
             android:layout_toRightOf="@+id/text_notes"
             android:gravity="center"
             android:hint="@string/notes"
@@ -97,7 +96,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/text_date"
-            android:layout_alignLeft="@+id/spinner_category"
+            android:layout_alignLeft="@+id/spinner_category_income"
             android:layout_toRightOf="@+id/text_date"
             android:focusable="false"
             android:gravity="center"

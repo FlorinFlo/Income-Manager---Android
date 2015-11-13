@@ -6,11 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.Button;
 
 import com.example.incomemanager.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import contentprovider.MyMonetaryContentProvider;
 import model.Money;
@@ -43,8 +45,14 @@ public class Budget_Fragment extends Fragment {
     public void onStart(){
     super.onStart();
         updateTime();
-        expenses=contentProvider.getExpensesGivingMonth(curentMonth);
+        Button btn= (Button) getActivity().findViewById(R.id.today_expenses);
+        Button btnBalance= (Button) getActivity().findViewById(R.id.current_balance);
+        btn.append(service.appendTextColor("5000","#ff0000"));
+        Date date=new Date();
+        //contentProvider.getExpenses();
 
+        contentProvider.updateBalance(10,date);
+        contentProvider.getSavedBalance(getActivity(), date);
 
 
 
@@ -54,7 +62,6 @@ public class Budget_Fragment extends Fragment {
     public void updateTime(){
         calendar= Calendar.getInstance();
         curentMonth=calendar.get(Calendar.MONTH)+1;
-
     }
 }
 

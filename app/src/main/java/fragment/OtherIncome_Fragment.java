@@ -34,7 +34,7 @@ public class OtherIncome_Fragment extends Fragment {
 	    }
 	 @Override
 	public void onStart() {
-		 spinnerCat=(Spinner)getView().findViewById(R.id.spinner_category);
+		 spinnerCat=(Spinner)getView().findViewById(R.id.spinner_category_income);
 		 service.populateSpinnerCategory(spinnerCat,getActivity());
 
 		 spinnerCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

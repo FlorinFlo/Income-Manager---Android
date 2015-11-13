@@ -16,10 +16,10 @@ public class Money implements Parcelable {
 	private String rule;
 	private String type;
 
-	public Money(long money_id, long category_id, double amount, String notes,
+	public Money( long category_id, double amount, String notes,
 			Date date, String rule, String type) {
 		super();
-		this.money_id = money_id;
+
 		this.category_id = category_id;
 		this.amount = amount;
 		this.notes = notes;
@@ -96,8 +96,6 @@ public class Money implements Parcelable {
 
 	public Money(Parcel in){
 
-
-		this.money_id = in.readLong();
 		this.category_id = in.readLong();
 		this.amount = in.readDouble();
 		this.notes = in.readString();
@@ -113,7 +111,7 @@ public class Money implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-		dest.writeLong(this.money_id);
+
 		dest.writeLong(this.category_id);
 		dest.writeDouble(this.amount);
 		dest.writeString(this.notes);
@@ -122,4 +120,13 @@ public class Money implements Parcelable {
 		dest.writeString(this.type);
 
 	}
+	public static final Parcelable.Creator<Money> CREATOR = new Parcelable.Creator<Money>() {
+		public Money createFromParcel(Parcel in) {
+			return new Money(in);
+		}
+		public Money[] newArray(int size){
+			return new Money[size];
+		}
+
+};
 }

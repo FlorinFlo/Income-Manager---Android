@@ -18,9 +18,10 @@ import android.widget.Toast;
 import com.example.incomemanager.R;
 
 import dialog.NewCategoryDialog;
-import service.MyFragmentPageAdapter;
 import fragment.Salary_Fragment;
 import model.Category;
+import model.Money;
+import service.MyFragmentPageAdapter;
 import service.Service;
 
 
@@ -34,8 +35,8 @@ public class Income_Activity extends ActionBarActivity implements Salary_Fragmen
 	private boolean repeatingAlarm=false;
 	private int hour;
 	private int minute;
-	private long salary=-1;
-	private long cat_id;
+	private long salary=0;
+	private long cat_id=1;
 
 
 
@@ -84,7 +85,7 @@ public class Income_Activity extends ActionBarActivity implements Salary_Fragmen
 				EditText text_amount = (EditText) findViewById(R.id.amount);
 				EditText text_notes = (EditText) findViewById(R.id.notes);
 				EditText text_date = (EditText) findViewById(R.id.date);
-				Spinner spiner_cat = (Spinner) findViewById(R.id.spinner_category);
+				Spinner spiner_cat = (Spinner) findViewById(R.id.spinner_category_income);
 
 				if (!service.emptyText(text_amount)
 						&& !service.emptyText(text_date)
@@ -97,8 +98,8 @@ public class Income_Activity extends ActionBarActivity implements Salary_Fragmen
 
 					rule = "1";// one time income "Other income"
 
-
-					service.contentProvider().createIncomeExpense(amount, notes, date, category.getCategory_id(), rule, this, "Income");
+					Money money=new Money(category.getCategory_id(),Double.parseDouble(amount),notes, service.getDateFromString(date),rule,"Income");
+					service.contentProvider().createIncomeExpense(money,this);
 
 
 					Intent intent = new Intent(this, MainActivity.class);
@@ -138,13 +139,12 @@ public class Income_Activity extends ActionBarActivity implements Salary_Fragmen
 
 					notes = text_notes_salary.getText().toString();
 					date = text_date_salary.getText().toString();
-
-					service.contentProvider().createIncomeExpense(amount, notes, date, salary, rule,
-							this,"Income");
+					Money money=new Money(salary,Double.parseDouble(amount),notes,service.getDateFromString(date),rule,"Income");
+					service.contentProvider().createIncomeExpense(money,this);
 
 					if(repeatingAlarm){
 						Log.w("Creating minutes",""+hour+">>>>>>>>>"+minute);
-						service.createAlarm(this,rule,date,notes,hour,minute);
+						service.createAlarm(this,money,hour,minute);
 					}
 					Intent intent = new Intent(this, MainActivity.class);
 					intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -178,7 +178,7 @@ public class Income_Activity extends ActionBarActivity implements Salary_Fragmen
 	}
 
 	public void addCategories(View view){
-		Spinner spiner_cat= (Spinner) findViewById(R.id.spinner_category);
+		Spinner spiner_cat= (Spinner) findViewById(R.id.spinner_category_income);
 		final NewCategoryDialog dialog=new NewCategoryDialog(this,spiner_cat);
 
 

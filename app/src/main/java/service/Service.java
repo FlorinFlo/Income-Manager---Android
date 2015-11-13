@@ -11,6 +11,9 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.text.Html;
+import android.text.Spanned;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -144,8 +147,8 @@ public class Service {
 
 
 
-    public Date returnDateFromString(String date) {
-
+    public Date getDateFromString(String date) {
+        Log.w("Datebalance ", "" + date);
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date returnedDate = null;
         try {
@@ -161,7 +164,7 @@ public class Service {
 
     //Return hex color from int
     public String returnHexColorFromInt(int color){
-        return String.format("#%06X",(0xFFFFFF & color));
+        return String.format("#%06X", (0xFFFFFF & color));
     }
 
     //Returns int color
@@ -218,52 +221,65 @@ public class Service {
          }
          ArrayAdapter<Category>adapter=new ArrayAdapter<Category>(context,android.R.layout.simple_spinner_item,arraySpinner);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        Log.w("Putin adapter","Hello"+spiner);
              spiner.setAdapter(adapter);
 
 
 
 }
 
-    public void createAlarm(Context context,String rule,String date,String note,int hour,int minute){
-
-            Date dat=this.returnDateFromString(date);
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            calendar.setTime(dat);
-            calendar.set(Calendar.HOUR_OF_DAY, hour);
-            calendar.set(Calendar.MINUTE, minute);
-
+    public void createAlarm(Context context,Money money,int hour,int minute){
+        Log.w("Create alarm ","Service"+hour+":"+minute);
+        Calendar calendar = Calendar.getInstance();
+        Date dat=money.getDate();
+        calendar.setTime(dat);
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
+        Log.w("Money date", "Money Date" + money.getDate());
+        if(money.getRule().equals("Monthly")){
+            Log.w("Monthly Rule","Create alarm");
+            calendar.add(Calendar.MINUTE,10);
+        }else if(money.getRule().equals("Biweekly")){
+            Log.w("Biweekly Rule","Create alarm");
+            calendar.add(Calendar.MINUTE,2);
+        }else if(money.getRule().equals("Weekly")){
+            Log.w("Weekly Rule","Create alarm");
+            calendar.add(Calendar.MINUTE,1);
+        }
+        money.setDate(calendar.getTime());
+        Log.w("Money date after if", "Money Date" + money.getDate().getHours()+money.getDate().getMinutes());
+           // calendar.setTimeInMillis(System.currentTimeMillis());
 
             AlarmManager alarmMgr= (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
             Intent intent=new Intent(context,AlarmReceiver.class);
-            intent.putExtra("message",note);
-            intent.putExtra("rule", rule);
+            intent.putExtra("Money",money);
             intent.putExtra("hour", hour);
             intent.putExtra("minute", minute);
-            intent.putExtra("date", this.getStringFromCalendar(calendar));
             PendingIntent alarmIntent=PendingIntent.getBroadcast(context,0,intent,0);
             alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
-
-
+            contentProvider.createIncomeExpense(money, context);
+            Log.w("after intent","Intent");
 
 
     }
 
     public void createNotification(Context context,Intent intent){
         Bundle extra=intent.getExtras();
-        String message=extra.getString("message");
-        String rule=extra.getString("rule");
+        Log.v("Geting money out","TEst:");
+        Money money=extra.getParcelable("Money");
+        Log.v("Geting money out","TEst:"+money.getDate());
+        String message=money.getNotes();
+        String rule=money.getRule();
         int hour=extra.getInt("hour");
         int minute=extra.getInt("minute");
-        String date=extra.getString("date");
+        String date=getStringFromDate(money.getDate());
         Uri sound= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Intent nextIntent=new Intent(context, RescheduleAlarm_Activity.class);
-        nextIntent.putExtra("rule", rule);
-        nextIntent.putExtra("message",message);
+        nextIntent.putExtra("Money", money);
         nextIntent.putExtra("hour", hour);
         nextIntent.putExtra("minute", minute);
-        nextIntent.putExtra("date", date);
+
 //        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         PendingIntent pIntent=PendingIntent.getActivity(context, (int) System.currentTimeMillis(),nextIntent,0);
@@ -276,10 +292,11 @@ public class Service {
         builder.setSound(sound);
 
 
+
         NotificationManager nm= (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         nm.notify(1, builder.build());
 
-
+        Log.w("Show notification","Notification");
 
 
 
@@ -414,4 +431,57 @@ public class Service {
         return returnedAmount;
     }
 
+
+    public Spanned appendTextColor(String str,String hexColor){
+        String text="<font color="+hexColor+">" + str + " </font>";
+        return Html.fromHtml(text);
+
+    }
+
+//    public void updateBalance(Context context){
+//        double balanceWeekBefore=0;
+//        double balanceThisWeek=0;
+//        Date date=new Date();
+//
+//
+//            Balance balance=contentProvider.getSavedBalance(context,date);
+//            int savedWeek=getWeekOfYear(balance.getBalanceDate());
+//            int thisWeek=getWeekOfYear(date);
+//            if(savedWeek!=thisWeek){
+//
+//
+//
+//                  contentProvider.getBalanceWeek(thisWeek,savedWeek);
+//
+//
+//
+//
+//
+//            balanceWeekBefore=contentProvider.getBalanceWeek(date);
+//
+//
+//        }
+//    }
+
+    /* the function strftimr()that is used
+     with week of the year starts with week 0 */
+    public int getWeekOfYear(Date date){
+
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar.get(Calendar.WEEK_OF_YEAR)-1;
+    }
+
+    public int getDayNumber(Date date){
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTime(date);
+        return calendar.get(Calendar.DAY_OF_WEEK);
+    }
+
+    public Date getUpdateDate(Date date){
+        Calendar calendar= Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DAY_OF_YEAR,-1);
+       return date=calendar.getTime();
+    }
 }

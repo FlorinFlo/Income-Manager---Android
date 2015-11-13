@@ -15,7 +15,10 @@ import android.view.MenuItem;
 
 import com.example.incomemanager.R;
 
+import java.util.Date;
+
 import contentprovider.MyMonetaryContentProvider;
+import model.Money;
 import service.MyFragmentPageAdapter;
 import service.Service;
 import tabs.SlidingTabLayout;
@@ -44,6 +47,8 @@ public class MainActivity extends ActionBarActivity {
         mtabs= (SlidingTabLayout) findViewById(R.id.tabs);
         mtabs.setDistributeEvenly(true);
         mtabs.setViewPager(mPager);
+        contentProvider.getExpenses();
+
 
 
 
@@ -53,7 +58,12 @@ public class MainActivity extends ActionBarActivity {
                 @Override
                 public void run() {
                     try {
+                        Date date=new Date();
+                        service.getStringFromDate(date);
+
                         contentProvider.createCategoriesForFirstTime(activity, "category");
+                        Money money=new Money(-1,0.0,"Balance",date,"Weekly", "Balance");
+                        contentProvider.createIncomeExpense(money,activity);
                         }catch (Exception e){
 
                         }

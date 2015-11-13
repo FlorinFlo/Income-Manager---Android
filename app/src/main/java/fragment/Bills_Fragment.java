@@ -62,7 +62,7 @@ public class Bills_Fragment extends Fragment {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 				cat = (Category) parent.getItemAtPosition(position);
-				((Expenses_Activity) getActivity()).setCategory((cat.getCategory_id()));
+				((Expenses_Activity) getActivity()).setCategory(cat.getCategory_id());
 			}
 
 			@Override

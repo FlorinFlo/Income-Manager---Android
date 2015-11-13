@@ -33,7 +33,7 @@ public class Expenses_Fragment extends Fragment {
 
 	@Override
 	public void onStart() {
-		spinnerCategory=(Spinner)getView().findViewById(R.id.spinner_category);
+		spinnerCategory=(Spinner)getView().findViewById(R.id.spinner_category_expenses);
 		service.populateSpinnerCategory(spinnerCategory,getActivity());
 		spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 			Category cat;

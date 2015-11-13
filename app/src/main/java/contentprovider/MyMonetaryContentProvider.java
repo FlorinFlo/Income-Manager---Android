@@ -12,539 +12,583 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 
 import database.CategoryTable;
 import database.MonetaryDatabaseHelper;
 import database.MonetaryTable;
+import model.Balance;
 import model.Category;
 import model.Money;
 
 public class MyMonetaryContentProvider extends ContentProvider {
 
-	// database
-	private static SQLiteDatabase db;
+    // database
+    private static SQLiteDatabase db;
 
 
+    private ArrayList<Category> categoriesList = new ArrayList<Category>();
+    private service.Service service_ = service.Service.getInstance();
 
+    // UriMatcher
+    private static final int MONETARYS = 1;
+    private static final int MONETARY_ID = 2;
 
-	private ArrayList<Category> categoriesList = new ArrayList<Category>();
-	private service.Service service_= service.Service.getInstance();
+    private static final int CATEGORYS = 3;
+    private static final int CATEGORY_ID = 4;
 
-	// UriMatcher
-	private static final int MONETARYS = 1;
-	private static final int MONETARY_ID = 2;
+    private static final String AUTHORITHY = "com.example.contentprovider";
 
-	private static final int CATEGORYS = 3;
-	private static final int CATEGORY_ID = 4;
+    private static final String BASE_PATH = "money";
 
-	private static final String AUTHORITHY = "com.example.contentprovider";
+    private static final String BASE_PATH_CAT = "category";
 
-	private static final String BASE_PATH = "money";
+    public static Uri CONTENT_URI = Uri.parse("content://" + AUTHORITHY + "/"
+            + BASE_PATH);
 
-	private static final String BASE_PATH_CAT = "category";
+    public static Uri CONTENT_URI_CAT = Uri.parse("content://" + AUTHORITHY
+            + "/" + BASE_PATH_CAT);
 
-	public static Uri CONTENT_URI = Uri.parse("content://" + AUTHORITHY + "/"
-			+ BASE_PATH);
+    public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
+            + "/money";
+    public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
+            + "/money";
 
-	public static Uri CONTENT_URI_CAT = Uri.parse("content://" + AUTHORITHY
-			+ "/" + BASE_PATH_CAT);
+    public static final String CONTENT_TYPE_CAT = ContentResolver.CURSOR_DIR_BASE_TYPE
+            + "/category";
 
-	public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE
-			+ "/money";
-	public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE
-			+ "/money";
+    public static final String CONTENT_ITEM_TYPE_CAT = ContentResolver.CURSOR_ITEM_BASE_TYPE
+            + "/category";
 
-	public static final String CONTENT_TYPE_CAT = ContentResolver.CURSOR_DIR_BASE_TYPE
-			+ "/category";
+    public static final UriMatcher sURI_MATCHER = new UriMatcher(
+            UriMatcher.NO_MATCH);
 
-	public static final String CONTENT_ITEM_TYPE_CAT = ContentResolver.CURSOR_ITEM_BASE_TYPE
-			+ "/category";
+    static {
+        sURI_MATCHER.addURI(AUTHORITHY, BASE_PATH, MONETARYS);
+        sURI_MATCHER.addURI(AUTHORITHY, BASE_PATH + "/#", MONETARY_ID);
+        sURI_MATCHER.addURI(AUTHORITHY, BASE_PATH_CAT, CATEGORYS);
+        sURI_MATCHER.addURI(AUTHORITHY, BASE_PATH_CAT + "/#", CATEGORY_ID);
 
-	public static final UriMatcher sURI_MATCHER = new UriMatcher(
-			UriMatcher.NO_MATCH);
+    }
 
-	static {
-		sURI_MATCHER.addURI(AUTHORITHY, BASE_PATH, MONETARYS);
-		sURI_MATCHER.addURI(AUTHORITHY, BASE_PATH + "/#", MONETARY_ID);
-		sURI_MATCHER.addURI(AUTHORITHY, BASE_PATH_CAT, CATEGORYS);
-		sURI_MATCHER.addURI(AUTHORITHY, BASE_PATH_CAT + "/#", CATEGORY_ID);
 
-	}
+    @Override
+    public boolean onCreate() {
+        MonetaryDatabaseHelper database = new MonetaryDatabaseHelper(getContext());
+        db = database.getWritableDatabase();
 
+        return (db == null) ? false : true;
+    }
 
-	@Override
-	public boolean onCreate() {
-		MonetaryDatabaseHelper database=new MonetaryDatabaseHelper(getContext());
-		db=database.getWritableDatabase();
+    @Override
+    public Cursor query(Uri uri, String[] projection, String selection,
+                        String[] selectionArgs, String sortOrder) {
+        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
-		return (db==null)?false:true;
-	}
 
-	@Override
-	public Cursor query(Uri uri, String[] projection, String selection,
-			String[] selectionArgs, String sortOrder) {
-		SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+        checkColumns(projection);
 
+        int uriType = sURI_MATCHER.match(uri);
 
-		checkColumns(projection);
+        switch (uriType) {
 
-		int uriType = sURI_MATCHER.match(uri);
+            case MONETARY_ID:
+                queryBuilder.appendWhere(MonetaryTable.COLUMN_ID + "="
+                        + uri.getLastPathSegment());
 
-		switch (uriType) {
+                break;
+            case MONETARYS:
+                queryBuilder.setTables(MonetaryTable.TABLE_MONETARY);
 
-		case MONETARY_ID:
-			queryBuilder.appendWhere(MonetaryTable.COLUMN_ID + "="
-					+ uri.getLastPathSegment());
+                break;
 
-			break;
-		case MONETARYS:
-			queryBuilder.setTables(MonetaryTable.TABLE_MONETARY);
+            case CATEGORY_ID:
+                queryBuilder.appendWhere(CategoryTable.COLUMN_ID + "="
+                        + uri.getLastPathSegment());
 
-			break;
+                break;
+            case CATEGORYS:
+                queryBuilder.setTables(CategoryTable.TABLE_CATEGORY);
 
-		case CATEGORY_ID:
-			queryBuilder.appendWhere(CategoryTable.COLUMN_ID + "="
-					+ uri.getLastPathSegment());
+                break;
 
-			break;
-		case CATEGORYS:
-			queryBuilder.setTables(CategoryTable.TABLE_CATEGORY);
+            default:
+                throw new IllegalArgumentException("Unknown URI: " + uri);
 
-			break;
+        }
 
-		default:
-			throw new IllegalArgumentException("Unknown URI: " + uri);
 
-		}
+        Cursor cursor = queryBuilder.query(db, projection, selection,
+                selectionArgs, null, null, sortOrder);
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
 
 
+        return cursor;
+    }
 
-		Cursor cursor = queryBuilder.query(db, projection, selection,
-				selectionArgs, null, null, sortOrder);
-		cursor.setNotificationUri(getContext().getContentResolver(), uri);
+    private void checkColumns(String[] projection) {
+        String[] available = {MonetaryTable.COLUMN_ID,
+                MonetaryTable.COLUMN_CATEGORY, MonetaryTable.COLUMN_AMOUNT,
+                MonetaryTable.COLUMN_NOTES, MonetaryTable.COLUMN_DATE,
+                MonetaryTable.COLUMN_RULE, MonetaryTable.COLUMN_TYPE};
 
+        if (projection != null) {
+            HashSet<String> requestedColumns = new HashSet<String>(
+                    Arrays.asList(projection));
+            HashSet<String> availableCollumns = new HashSet<String>(
+                    Arrays.asList(available));
+            if (!availableCollumns.contains(requestedColumns)) {
+                throw new IllegalArgumentException(
+                        "Unknown columns in projection");
+            }
 
-		return cursor;
-	}
+        }
 
-	private void checkColumns(String[] projection) {
-		String[] available = { MonetaryTable.COLUMN_ID,
-				MonetaryTable.COLUMN_CATEGORY, MonetaryTable.COLUMN_AMOUNT,
-				MonetaryTable.COLUMN_NOTES, MonetaryTable.COLUMN_DATE,
-				MonetaryTable.COLUMN_RULE, MonetaryTable.COLUMN_TYPE };
+    }
 
-		if (projection != null) {
-			HashSet<String> requestedColumns = new HashSet<String>(
-					Arrays.asList(projection));
-			HashSet<String> availableCollumns = new HashSet<String>(
-					Arrays.asList(available));
-			if (!availableCollumns.contains(requestedColumns)) {
-				throw new IllegalArgumentException(
-						"Unknown columns in projection");
-			}
+    @Override
+    public String getType(Uri uri) {
 
-		}
+        return null;
+    }
 
-	}
+    @Override
+    public Uri insert(Uri uri, ContentValues values) {
+        int uriType = sURI_MATCHER.match(uri);
+        Uri doneUri;
+        Log.w("Insert","INSERT"+uriType);
 
-	@Override
-	public String getType(Uri uri) {
 
-		return null;
-	}
+        int rowsDeleted = 0;
+        long id = 0;
 
-	@Override
-	public Uri insert(Uri uri, ContentValues values) {
-		int uriType = sURI_MATCHER.match(uri);
-		Uri doneUri;
+        switch (uriType) {
+            case MONETARYS:
 
+                id = db.insert(MonetaryTable.TABLE_MONETARY, null, values);
+                Log.w("Insert","INSERT"+id);
+                break;
 
+            case CATEGORYS:
 
-		int rowsDeleted = 0;
-		long id = 0;
+                id = db.insert(CategoryTable.TABLE_CATEGORY, null, values);
+                break;
+            case -1:
+                Log.w("USsssss","ssss");
 
-		switch (uriType) {
-		case MONETARYS:
+            default:
+                throw new IllegalArgumentException("Unknown URI" + uri);
 
-			id = db.insert(MonetaryTable.TABLE_MONETARY, null, values);
-			break;
 
-		case CATEGORYS:
+        }
 
-			id = db.insert(CategoryTable.TABLE_CATEGORY, null, values);
-			break;
+        getContext().getContentResolver().notifyChange(uri, null);
 
-		default:
-			throw new IllegalArgumentException("Unknown URI" + uri);
+        if (uriType == MONETARYS) {
 
+            doneUri = Uri.parse(BASE_PATH + "/" + id);
+        } else {
+            doneUri = Uri.parse(BASE_PATH_CAT + "/" + id);
+        }
 
+        return doneUri;
+    }
+
+    @Override
+    public int delete(Uri uri, String selection, String[] selectionArgs) {
+        int uriType = sURI_MATCHER.match(uri);
+
+        int rowsDeleted = 0;
+        switch (uriType) {
+            case MONETARYS:
 
-		}
+                rowsDeleted = db.delete(MonetaryTable.TABLE_MONETARY, selection,
+                        selectionArgs);
+                break;
 
-		getContext().getContentResolver().notifyChange(uri, null);
+            case MONETARY_ID:
+                //sqlDB = database.getWritableDatabase();
+                String id = uri.getLastPathSegment();
+                if (TextUtils.isEmpty(selection)) {
+                    rowsDeleted = db.delete(MonetaryTable.TABLE_MONETARY,
+                            MonetaryTable.COLUMN_ID + "=" + id, null);
 
-		if (uriType == MONETARYS) {
+                } else {
+                    rowsDeleted = db.delete(MonetaryTable.TABLE_MONETARY,
+                            MonetaryTable.COLUMN_ID + "=" + id + "and" + selection,
+                            selectionArgs);
+                }
+                break;
 
-			doneUri = Uri.parse(BASE_PATH + "/" + id);
-		} else {
-			doneUri = Uri.parse(BASE_PATH_CAT + "/" + id);
-		}
+            case CATEGORYS:
 
-		return doneUri;
-	}
+                rowsDeleted = db.delete(MonetaryTable.TABLE_MONETARY, selection,
+                        selectionArgs);
+                break;
 
-	@Override
-	public int delete(Uri uri, String selection, String[] selectionArgs) {
-		int uriType = sURI_MATCHER.match(uri);
+            case CATEGORY_ID:
 
-		int rowsDeleted = 0;
-		switch (uriType) {
-		case MONETARYS:
+                String id_cat = uri.getLastPathSegment();
+                if (TextUtils.isEmpty(selection)) {
+                    rowsDeleted = db.delete(CategoryTable.TABLE_CATEGORY,
+                            CategoryTable.COLUMN_ID + "=" + id_cat, null);
 
-			rowsDeleted = db.delete(MonetaryTable.TABLE_MONETARY, selection,
-					selectionArgs);
-			break;
+                } else {
+                    rowsDeleted = db.delete(CategoryTable.TABLE_CATEGORY,
+                            CategoryTable.COLUMN_ID + "=" + id_cat + "and"
+                                    + selection, selectionArgs);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown URI :" + uri);
 
-		case MONETARY_ID:
-			//sqlDB = database.getWritableDatabase();
-			String id = uri.getLastPathSegment();
-			if (TextUtils.isEmpty(selection)) {
-				rowsDeleted = db.delete(MonetaryTable.TABLE_MONETARY,
-						MonetaryTable.COLUMN_ID + "=" + id, null);
+        }
 
-			} else {
-				rowsDeleted = db.delete(MonetaryTable.TABLE_MONETARY,
-						MonetaryTable.COLUMN_ID + "=" + id + "and" + selection,
-						selectionArgs);
-			}
-			break;
+        getContext().getContentResolver().notifyChange(uri, null);
 
-		case CATEGORYS:
+        return rowsDeleted;
+    }
 
-			rowsDeleted = db.delete(MonetaryTable.TABLE_MONETARY, selection,
-					selectionArgs);
-			break;
+    @Override
+    public int update(Uri uri, ContentValues values, String selection,
+                      String[] selectionArgs) {
+        Log.w("HEllo upda","Uri:"+uri+"Content values:"+values);
+        Log.w("Hello upda","selection:"+selection+"Selection ergs"+selectionArgs.length);
+        int uriType = sURI_MATCHER.match(uri);
+        Log.w("URITYPE",""+uriType);
 
-		case CATEGORY_ID:
+        int rowsUpdadated = 0;
+        switch (uriType) {
+            case MONETARYS:
 
-			String id_cat = uri.getLastPathSegment();
-			if (TextUtils.isEmpty(selection)) {
-				rowsDeleted = db.delete(CategoryTable.TABLE_CATEGORY,
-						CategoryTable.COLUMN_ID + "=" + id_cat, null);
+                rowsUpdadated = db.update(MonetaryTable.TABLE_MONETARY, values,
+                        selection, selectionArgs);
 
-			} else {
-				rowsDeleted = db.delete(CategoryTable.TABLE_CATEGORY,
-						CategoryTable.COLUMN_ID + "=" + id_cat + "and"
-								+ selection, selectionArgs);
-			}
-			break;
-		default:
-			throw new IllegalArgumentException("Unknown URI :" + uri);
+                break;
+            case MONETARY_ID:
 
-		}
+                String id = uri.getLastPathSegment();
 
-		getContext().getContentResolver().notifyChange(uri, null);
+                if (TextUtils.isEmpty(selection)) {
+                    rowsUpdadated = db.update(MonetaryTable.TABLE_MONETARY,
+                            values, MonetaryTable.COLUMN_ID + "=" + id, null);
+                } else {
+                    rowsUpdadated = db.update(MonetaryTable.TABLE_MONETARY,
+                            values, MonetaryTable.COLUMN_ID + "=" + id + "and"
+                                    + selection, selectionArgs);
+                }
+                break;
+            case CATEGORYS:
 
-		return rowsDeleted;
-	}
+                rowsUpdadated = db.update(CategoryTable.TABLE_CATEGORY, values,
+                        selection, selectionArgs);
+                break;
 
-	@Override
-	public int update(Uri uri, ContentValues values, String selection,
-			String[] selectionArgs) {
+            case CATEGORY_ID:
 
-		int uriType = sURI_MATCHER.match(uri);
+                String id_cat = uri.getLastPathSegment();
+                if (TextUtils.isEmpty(selection)) {
+                    rowsUpdadated = db.update(CategoryTable.TABLE_CATEGORY,
+                            values, CategoryTable.COLUMN_ID + "=" + id_cat, null);
+                } else {
+                    rowsUpdadated = db.update(CategoryTable.TABLE_CATEGORY,
+                            values, CategoryTable.COLUMN_ID + "=" + id_cat + "and"
+                                    + selection, selectionArgs);
+                }
+                break;
 
-		int rowsUpdadated = 0;
-		switch (uriType) {
-		case MONETARYS:
+            default:
 
-			rowsUpdadated = db.update(MonetaryTable.TABLE_MONETARY, values,
-					selection, selectionArgs);
+                throw new IllegalArgumentException("Unknown URI :" + uri);
 
-			break;
-		case MONETARY_ID:
+        }
+        getContext().getContentResolver().notifyChange(uri, null);
 
-			String id = uri.getLastPathSegment();
+        return rowsUpdadated;
+    }
 
-			if (TextUtils.isEmpty(selection)) {
-				rowsUpdadated = db.update(MonetaryTable.TABLE_MONETARY,
-						values, MonetaryTable.COLUMN_ID + "=" + id, null);
-			} else {
-				rowsUpdadated = db.update(MonetaryTable.TABLE_MONETARY,
-						values, MonetaryTable.COLUMN_ID + "=" + id + "and"
-								+ selection, selectionArgs);
-			}
-			break;
-		case CATEGORYS:
+    public boolean tableExists(String tableName) {
 
-			rowsUpdadated = db.update(CategoryTable.TABLE_CATEGORY, values,
-					selection, selectionArgs);
-			break;
+        Cursor cursor = null;
+        boolean created = false;
 
-		case CATEGORY_ID:
+        try {
 
-			String id_cat = uri.getLastPathSegment();
-			if (TextUtils.isEmpty(selection)) {
-				rowsUpdadated = db.update(CategoryTable.TABLE_CATEGORY,
-						values, CategoryTable.COLUMN_ID + "=" + id_cat, null);
-			} else {
-				rowsUpdadated = db.update(CategoryTable.TABLE_CATEGORY,
-						values, CategoryTable.COLUMN_ID + "=" + id_cat + "and"
-								+ selection, selectionArgs);
-			}
-			break;
+            cursor = db.rawQuery("Select * FROM " + tableName, null);
 
-		default:
+            created = true;
+        } catch (Exception e) {
 
-			throw new IllegalArgumentException("Unknown URI :" + uri);
+            Log.i("Exception method :", e.toString());
 
-		}
-		getContext().getContentResolver().notifyChange(uri, null);
+        }
+        cursor.close();
 
-		return rowsUpdadated;
-	}
+        return created;
 
-	public boolean tableExists(String tableName) {
+    }
 
-		Cursor cursor = null;
-		boolean created = false;
+    public void dropTable(Context context) {
 
-		try {
 
-			cursor = db.rawQuery("Select * FROM " + tableName, null);
+        String sql = "drop table " + "category";
+        try {
 
-			created = true;
-		} catch (Exception e) {
+            db.execSQL(sql);
 
-			Log.i("Exception caught in tableExists method :", e.toString());
+        } catch (SQLException e) {
+            Log.w("Problem drop category ", "" + e);
+        }
+    }
 
-		}
-		cursor.close();
+    public void createCategoriesForFirstTime(Context context, String tablename) {
 
-		return created;
+        if (this.tableExists(tablename)) {
 
-	}
+            try {
 
-	public void dropTable(Context context) {
+                String[] colorList = {"#00ffff", "#8b008b", "#add8e6", "#90ee90",
+                        "#d3d3d3", "#ffb6c1", "#ffffe0", "#0000ff", "#a52a2a", "#00008b",
+                        "#008b8b", "#a9a9a9", "#006400", "#bdb76b", "#556b2f", "#ff8c00",
+                        "#9932cc", "#8b0000", "#e9967a", "#9400d3", "#ff00ff", "#ffd700",
+                        "#008000", "#4b0082", "#f0e68c", "#00ff00", "#800000", "#000080",
+                        "#ffa500", "#ffc0cb", "#800080", "#ff0000", "#c0c0c0", "#ffff00"};
 
 
+                String[] categoryNames = {"Other", "Food and drinks",
+                        "Health care", "Leisure", "Transportation", "Fuel",
+                        "Hotel", "Household", "Insurance", "Utilities"};
 
-		String sql = "drop table " + "category";
-		try {
+                for (int i = 0; i < categoryNames.length; i++) {
+                    Log.w("SERVICE", "categories size" + categoryNames.length);
+                    ContentValues values = new ContentValues();
+                    values.put(CategoryTable.COLUMN_NAME, categoryNames[i]);
+                    values.put(CategoryTable.COLUMN_COLOR, colorList[i]);
+                    Uri uri = context.getContentResolver().insert(
+                            MyMonetaryContentProvider.CONTENT_URI_CAT, values);
+                    Log.w("Categories CREATED", "yes");
+                }
 
-			db.execSQL(sql);
+            } catch (Exception e) {
+                Log.w("ERRRROR", "" + e);
+            }
+        }
 
-		} catch (SQLException e) {
-			Log.w("Problem drop category ", "" + e);
-		}
-	}
+    }
 
-	public void createCategoriesForFirstTime(Context context, String tablename) {
+    public ArrayList<Category> getCategories(Context context) {
 
-		if (this.tableExists(tablename)) {
 
-			try {
+        ArrayList<Category> listCat = new ArrayList<Category>();
 
-				 String[] colorList = {"#00ffff", "#8b008b", "#add8e6", "#90ee90",
-						"#d3d3d3", "#ffb6c1", "#ffffe0", "#0000ff", "#a52a2a", "#00008b",
-						"#008b8b", "#a9a9a9", "#006400", "#bdb76b", "#556b2f", "#ff8c00",
-						"#9932cc", "#8b0000", "#e9967a", "#9400d3", "#ff00ff", "#ffd700",
-						"#008000", "#4b0082", "#f0e68c", "#00ff00", "#800000", "#000080",
-						"#ffa500", "#ffc0cb", "#800080", "#ff0000", "#c0c0c0", "#ffff00"};
+        Cursor cursor = db
+                .query("category", null, null, null, null, null, null);
+        cursor.moveToFirst();
 
+        while (!cursor.isAfterLast()) {
 
-				String[] categoryNames = {"Other", "Food and drinks",
-						"Health care", "Leisure", "Transportation", "Fuel",
-						"Hotel", "Household", "Insurance", "Utilities"};
+            long catId = Long.parseLong(cursor.getString(cursor
+                    .getColumnIndex(CategoryTable.COLUMN_ID)));
+            String nameCat = cursor.getString(cursor
+                    .getColumnIndex(CategoryTable.COLUMN_NAME));
+            String colorCat = (cursor.getString(cursor
+                    .getColumnIndex(CategoryTable.COLUMN_COLOR)));
 
-				for (int i = 0; i < categoryNames.length; i++) {
-					Log.w("SERVICE", "categories size" + categoryNames.length);
-					ContentValues values = new ContentValues();
-					values.put(CategoryTable.COLUMN_NAME, categoryNames[i]);
-					values.put(CategoryTable.COLUMN_COLOR, colorList[i]);
-				Uri	uri = context.getContentResolver().insert(
-							MyMonetaryContentProvider.CONTENT_URI_CAT, values);
-					Log.w("Categories CREATED", "yes");
-				}
+            Category category = new Category(catId, nameCat, colorCat);
+            cursor.moveToNext();
 
-			} catch (Exception e) {
-				Log.w("ERRRROR", "" + e);
-			}
-		}
+            listCat.add(category);
+        }
+        cursor.close();
 
-	}
+        return listCat;
 
-	public ArrayList<Category> getCategories(Context context) {
+    }
 
+    public Category getCategoryForId(long categoryId) {
 
-		ArrayList<Category> listCat = new ArrayList<Category>();
+        Category category = null;
 
-		Cursor cursor = db
-				.query("category", null, null, null, null, null, null);
-		cursor.moveToFirst();
 
-		while (!cursor.isAfterLast()) {
+        Cursor cursor = db.query(CategoryTable.TABLE_CATEGORY,
+                new String[]{CategoryTable.COLUMN_ID, CategoryTable.COLUMN_COLOR, CategoryTable.COLUMN_NAME},
+                CategoryTable.COLUMN_ID + "=?",
+                new String[]{String.valueOf(categoryId)}
+                , null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
 
-			long catId = Long.parseLong(cursor.getString(cursor
-					.getColumnIndex(CategoryTable.COLUMN_ID)));
-			String nameCat = cursor.getString(cursor
-					.getColumnIndex(CategoryTable.COLUMN_NAME));
-			String colorCat = (cursor.getString(cursor
-					.getColumnIndex(CategoryTable.COLUMN_COLOR)));
+                category = new Category();
 
-			Category category = new Category(catId, nameCat, colorCat);
-			cursor.moveToNext();
+                category.setCategory_id(cursor.getLong(cursor.getColumnIndex(CategoryTable.COLUMN_ID)));
 
-			listCat.add(category);
-		}
-		cursor.close();
+                category.setColor(cursor.getString(cursor.getColumnIndex(CategoryTable.COLUMN_COLOR)));
 
-		return listCat;
+                category.setName(cursor.getString(cursor.getColumnIndex(CategoryTable.COLUMN_NAME)));
+            } while (cursor.moveToNext());
 
-	}
+        }
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+        }
+        return category;
+    }
 
-	public Category getCategoryForId(long categoryId){
+    public boolean createNewCategory(String categoryName, String color, Context context) {
 
-		Category category=null;
+        try {
+            ContentValues values = new ContentValues();
+            values.put(CategoryTable.COLUMN_NAME, categoryName);
+            values.put(CategoryTable.COLUMN_COLOR, color);
+            Uri uri = context.getContentResolver().insert(
+                    MyMonetaryContentProvider.CONTENT_URI_CAT, values);
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
 
 
-		Cursor cursor=db.query(CategoryTable.TABLE_CATEGORY,
-				new String[]{CategoryTable.COLUMN_ID, CategoryTable.COLUMN_COLOR, CategoryTable.COLUMN_NAME},
-				CategoryTable.COLUMN_ID + "=?",
-				new String[]{String.valueOf(categoryId)}
-				, null, null, null);
-		if(cursor.moveToFirst()){
-			do {
+    }
 
-				category=new Category();
+    public void createIncomeExpense(Money money, Context context) {
 
-				category.setCategory_id(cursor.getLong(cursor.getColumnIndex(CategoryTable.COLUMN_ID)));
+        String moneyAmount=String.valueOf(money.getAmount());
+        String moneyDate=service_.getStringFromDate(money.getDate());
+        Uri uri = null;
+        ContentValues values = new ContentValues();
+        values.put(MonetaryTable.COLUMN_AMOUNT, moneyAmount);
+        values.put(MonetaryTable.COLUMN_NOTES, money.getNotes());
+        values.put(MonetaryTable.COLUMN_DATE, moneyDate);
+        values.put(MonetaryTable.COLUMN_CATEGORY, money.getCategory());
+        values.put(MonetaryTable.COLUMN_RULE, money.getRule());
+        values.put(MonetaryTable.COLUMN_TYPE, money.getType());
 
-				category.setColor(cursor.getString(cursor.getColumnIndex(CategoryTable.COLUMN_COLOR)));
 
-				category.setName(cursor.getString(cursor.getColumnIndex(CategoryTable.COLUMN_NAME)));
-			}while (cursor.moveToNext());
 
-		}if(cursor!=null && !cursor.isClosed()){
-			cursor.close();
-		}
-		return category;
-	}
+        uri = context.getContentResolver().insert(
+                MyMonetaryContentProvider.CONTENT_URI, values);
 
-	public boolean createNewCategory(String categoryName,String color,Context context ){
 
-	try {
-		ContentValues values = new ContentValues();
-		values.put(CategoryTable.COLUMN_NAME, categoryName);
-		values.put(CategoryTable.COLUMN_COLOR, color);
-		Uri	uri = context.getContentResolver().insert(
-				MyMonetaryContentProvider.CONTENT_URI_CAT, values);
-		return true;
-	}catch (Exception ex){
-		return false;
-	}
+    }
 
+    public void getExpenses() {
+        ArrayList<Money> expenses = new ArrayList<Money>();
+        Log.w("HELLO Expenses", "Monetary contetnprovicer");
+        Cursor cursor = db
+                .query("monetary", null, null, null, null, null, null);
+        cursor.moveToFirst();
 
-}
+        while (!cursor.isAfterLast()) {
 
-	public void createIncomeExpense(String amount, String notes, String date,
-									long category, String rule, Context context, String type) {
-		Uri uri=null;
-		ContentValues values = new ContentValues();
-		values.put(MonetaryTable.COLUMN_AMOUNT, amount);
-		values.put(MonetaryTable.COLUMN_NOTES, notes);
-		values.put(MonetaryTable.COLUMN_DATE, date);
-		values.put(MonetaryTable.COLUMN_CATEGORY, category);
-		values.put(MonetaryTable.COLUMN_RULE, rule);
-		if (type.contains("Income")) {
-			values.put(MonetaryTable.COLUMN_TYPE, "Income");
-		} else {
-			values.put(MonetaryTable.COLUMN_TYPE, "Expenses");
-		}
+            long moneyId = Long.parseLong(cursor.getString(cursor
+                    .getColumnIndex(MonetaryTable.COLUMN_ID)));
+            String catMoney = cursor.getString(cursor
+                    .getColumnIndex(MonetaryTable.COLUMN_CATEGORY));
+            Double amount = (cursor.getDouble(cursor
+                    .getColumnIndex(MonetaryTable.COLUMN_AMOUNT)));
+            String date = (cursor.getString(cursor
+                    .getColumnIndex(MonetaryTable.COLUMN_DATE)));
 
 
-			uri = context.getContentResolver().insert(
-					MyMonetaryContentProvider.CONTENT_URI, values);
+            Log.w("HELLO Expenses", "" + moneyId + date + ",,,,,,,,,,," + catMoney + "...." + amount);
 
+            cursor.moveToNext();
 
-	}
 
-	public void getExpenses(){
-		ArrayList<Money> expenses=new ArrayList<Money>();
-		Log.w("HELLO Expenses", "Monetary contetnprovicer");
-		Cursor cursor = db
-				.query("monetary", null, null, null, null, null, null);
-		cursor.moveToFirst();
+        }
+        cursor.close();
 
-		while (!cursor.isAfterLast()) {
 
+    }
 
-			long moneyId = Long.parseLong(cursor.getString(cursor
-					.getColumnIndex(MonetaryTable.COLUMN_ID)));
-			String catMoney = cursor.getString(cursor
-					.getColumnIndex(MonetaryTable.COLUMN_CATEGORY));
-			Double amount=(cursor.getDouble(cursor
-					.getColumnIndex(MonetaryTable.COLUMN_AMOUNT)));
-			String date = (cursor.getString(cursor
-					.getColumnIndex(MonetaryTable.COLUMN_DATE)));
+    public ArrayList<Money> getExpensesGivingMonth(int month) {
 
+        ArrayList<Money> expenses = new ArrayList<>();
+        Cursor cursor = db.query(MonetaryTable.TABLE_MONETARY,
+                new String[]{MonetaryTable.COLUMN_ID, MonetaryTable.COLUMN_CATEGORY,
+                        MonetaryTable.COLUMN_AMOUNT, MonetaryTable.COLUMN_NOTES,
+                        MonetaryTable.COLUMN_DATE, MonetaryTable.COLUMN_RULE, MonetaryTable.COLUMN_TYPE},
+                "strftime('%m',date)" + "=?",
+                new String[]{String.valueOf(month)}
+                , null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
 
+                Money money = new Money();
+                money.setMoney_id(cursor.getLong(cursor.getColumnIndex(MonetaryTable.COLUMN_ID)));
 
-			Log.w("HELLO Expenses",""+moneyId+date+",,,,,,,,,,,"+catMoney+"...."+amount);
+                money.setCategory(cursor.getLong(cursor.getColumnIndex(MonetaryTable.COLUMN_CATEGORY)));
 
-			cursor.moveToNext();
+                money.setAmount(cursor.getDouble(cursor.getColumnIndex(MonetaryTable.COLUMN_AMOUNT)));
 
+                money.setNotes(cursor.getString(cursor.getColumnIndex(MonetaryTable.COLUMN_NOTES)));
 
-		}
-		cursor.close();
+                String date = cursor.getString(cursor.getColumnIndex(MonetaryTable.COLUMN_DATE));
+                money.setDate(service_.getDateFromString(date));
 
+                money.setRule(cursor.getString(cursor.getColumnIndex(MonetaryTable.COLUMN_RULE)));
+                money.setType(cursor.getString(cursor.getColumnIndex(MonetaryTable.COLUMN_TYPE)));
 
+                expenses.add(money);
 
-	}
+            } while (cursor.moveToNext());
 
-	public ArrayList<Money> getExpensesGivingMonth(int month){
+        }
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+        }
+        return expenses;
 
-		ArrayList<Money> expenses=new ArrayList<>();
-		Cursor cursor=db.query(MonetaryTable.TABLE_MONETARY,
-				new String[]{MonetaryTable.COLUMN_ID, MonetaryTable.COLUMN_CATEGORY,
-						MonetaryTable.COLUMN_AMOUNT, MonetaryTable.COLUMN_NOTES,
-						MonetaryTable.COLUMN_DATE, MonetaryTable.COLUMN_RULE, MonetaryTable.COLUMN_TYPE},
-				"strftime('%m',date)" + "=?",
-				new String[]{String.valueOf(month)}
-				, null, null, null);
-		if(cursor.moveToFirst()){
-			do {
+    }
 
-				Money money=new Money();
-				money.setMoney_id(cursor.getLong(cursor.getColumnIndex(MonetaryTable.COLUMN_ID)));
 
-				money.setCategory(cursor.getLong(cursor.getColumnIndex(MonetaryTable.COLUMN_CATEGORY)));
 
-				money.setAmount(cursor.getDouble(cursor.getColumnIndex(MonetaryTable.COLUMN_AMOUNT)));
+    public Balance getSavedBalance(Context context, Date date) {
 
-				money.setNotes(cursor.getString(cursor.getColumnIndex(MonetaryTable.COLUMN_NOTES)));
+        Balance balance=new Balance();
+        Cursor cursor = db.query(MonetaryTable.TABLE_MONETARY,
+                new String[]{MonetaryTable.COLUMN_AMOUNT,MonetaryTable.COLUMN_DATE},
+                "type='Balance' ",null
+                , null, null, null);
+        cursor.moveToFirst();
 
-				String date=cursor.getString(cursor.getColumnIndex(MonetaryTable.COLUMN_DATE));
-				money.setDate(service_.returnDateFromString(date));
+        if (cursor.getCount() > 0) {
 
-				money.setRule(cursor.getString(cursor.getColumnIndex(MonetaryTable.COLUMN_RULE)));
-				money.setType(cursor.getString(cursor.getColumnIndex(MonetaryTable.COLUMN_TYPE)));
+            cursor.moveToFirst();
+             double amount = cursor.getDouble(cursor.getColumnIndex(MonetaryTable.COLUMN_AMOUNT));
+            String datebalance=cursor.getString(cursor.getColumnIndex(MonetaryTable.COLUMN_DATE));
+            Date balanceDate=service_.getDateFromString(datebalance);
 
-				expenses.add(money);
+            balance.setAmount(amount);
+            balance.setBalanceDate(balanceDate);
+        }else{
+            Toast toast = Toast.makeText(context,
+                    "<html>There has been an error and </br> you're balance has been reset to 0  </html>", Toast.LENGTH_LONG);
+            toast.show();
+            balance.setAmount(0);
+            balance.setBalanceDate(date);
 
-			}while (cursor.moveToNext());
+        }
+        cursor.close();
 
-		}if(cursor!=null && !cursor.isClosed()){
-			cursor.close();
-		}
-		return expenses;
+        return balance;
 
-	}
+    }
 
+    public void updateBalance( double amount,Date date){
+
+        String updateDate=service_.getStringFromDate(service_.getUpdateDate(date));
+        ContentValues cv=new ContentValues();
+        cv.put(MonetaryTable.COLUMN_AMOUNT,amount);
+        cv.put(MonetaryTable.COLUMN_DATE,updateDate);
+        db.update(MonetaryTable.TABLE_MONETARY,cv,"type='Balance'",null);
+
+    }
 
 
 
