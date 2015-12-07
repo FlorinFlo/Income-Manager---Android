@@ -12,12 +12,14 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.incomemanager.R;
 
 import java.util.Date;
 
 import contentprovider.MyMonetaryContentProvider;
+import model.Balance;
 import model.Money;
 import service.MyFragmentPageAdapter;
 import service.Service;
@@ -33,6 +35,7 @@ public class MainActivity extends ActionBarActivity {
     private SlidingTabLayout mtabs;
     private Service service = Service.getInstance();
     private MyMonetaryContentProvider contentProvider=service.contentProvider();
+    private Balance balance;
 
 
 
@@ -47,9 +50,6 @@ public class MainActivity extends ActionBarActivity {
         mtabs= (SlidingTabLayout) findViewById(R.id.tabs);
         mtabs.setDistributeEvenly(true);
         mtabs.setViewPager(mPager);
-        contentProvider.getExpenses();
-
-
 
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -62,7 +62,7 @@ public class MainActivity extends ActionBarActivity {
                         service.getStringFromDate(date);
 
                         contentProvider.createCategoriesForFirstTime(activity, "category");
-                        Money money=new Money(-1,0.0,"Balance",date,"Weekly", "Balance");
+                        Money money=new Money(-1,0.0,"Balance",date,"Weekly", "Balance",0);
                         contentProvider.createIncomeExpense(money,activity);
                         }catch (Exception e){
 
@@ -76,9 +76,11 @@ public class MainActivity extends ActionBarActivity {
             editor.putBoolean("firstTime", true);
             editor.commit();
         }
+        if(balance==null){
+            balance=contentProvider.getSavedBalance(this);
+        }
 
-
-
+       // contentProvider.getExpenses();
     }
 
     @Override
@@ -102,12 +104,14 @@ public class MainActivity extends ActionBarActivity {
             case (R.id.action_add):
 
                 Intent intent_income = new Intent(this, Income_Activity.class);
+
                 startActivity(intent_income);
 
                 return true;
             case (R.id.action_remove):
 
                 Intent intent_expense = new Intent(this, Expenses_Activity.class);
+
                 startActivity(intent_expense);
                 return true;
 
@@ -131,5 +135,44 @@ public class MainActivity extends ActionBarActivity {
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //TODO
+    }
+
+    public void setBalance(Balance balance){
+        this.balance=balance;
+    }
+    public Balance getBalance(){
+        return this.balance;
+    }
+
+    public void showWIncomes(View view){
+        startListActivity("Income","week");
+    }
+
+    public void showMIncomes(View view){
+        startListActivity("Income","month");
+    }
+
+    public void showWExpense(View view){
+        startListActivity("Expense","week");
+    }
+
+    public void showMExpense(View view){
+        startListActivity("Expense","month");
+    }
+
+    public void showTExpense(View view){
+        startListActivity("Expense","today");
+    }
+
+    public void startListActivity(String scope,String duration){
+        Intent intent_income = new Intent(this, ListActivity.class);
+        intent_income.putExtra("scope",scope);
+        intent_income.putExtra("duration",duration);
+        startActivity(intent_income);
+    }
 
 }

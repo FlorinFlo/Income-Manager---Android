@@ -26,7 +26,9 @@ public class MyFragmentPageAdapter extends FragmentPagerAdapter {
 
 	public MyFragmentPageAdapter(FragmentManager fm, String tabTitles[],
 			Context context) {
+
 		super(fm);
+
 		this.tabTitles = tabTitles;
 		Log.w("TABTITLE",tabTitles.length+"");
 		this.context = context;

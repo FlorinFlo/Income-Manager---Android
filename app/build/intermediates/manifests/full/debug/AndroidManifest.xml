@@ -52,7 +52,17 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="incomemanager.MainActivity" />
         </activity>
+        <activity
+            android:name="incomemanager.ListActivity"
+            android:label="List"
+            android:parentActivityName="incomemanager.MainActivity"
+            android:uiOptions="splitActionBarWhenNarrow" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="incomemanager.MainActivity" />
+        </activity>
         <activity android:name="incomemanager.RescheduleAlarm_Activity" />
+
         <!-- Broadcast reciver in case of reboot -->
         <receiver android:name="service.AlarmReceiver" >
             <intent-filter>

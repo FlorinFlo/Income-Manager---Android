@@ -19,6 +19,7 @@ import android.widget.ToggleButton;
 import com.example.incomemanager.R;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import incomemanager.Expenses_Activity;
 import model.Category;
@@ -73,7 +74,7 @@ public class Bills_Fragment extends Fragment {
 			}
 		});
 		dateField=(EditText) getView().findViewById(R.id.bill_date);
-		service.initiateDate(dateField, getActivity());
+		service.initiateDate(dateField, getActivity(),new Date());
 
 		togggle= (ToggleButton) getView().findViewById(R.id.toggle_repeat);
 		togggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -95,8 +96,9 @@ public class Bills_Fragment extends Fragment {
 
 
 						}
-					},hour,minute,true);
+					},service.getTimeNow(calendar)[0],service.getTimeNow(calendar)[1],true);
 					timePicker.setTitle("Select time");
+
 					timePicker.show();
 					((Expenses_Activity) getActivity()).setReapeatingAlarm(repeatAlarm);
 

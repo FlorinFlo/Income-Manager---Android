@@ -15,9 +15,10 @@ public class Money implements Parcelable {
 	private Date date;
 	private String rule;
 	private String type;
+	private int status;
 
 	public Money( long category_id, double amount, String notes,
-			Date date, String rule, String type) {
+			Date date, String rule, String type,int status) {
 		super();
 
 		this.category_id = category_id;
@@ -26,15 +27,13 @@ public class Money implements Parcelable {
 		this.date = date;
 		this.rule = rule;
 		this.type = type;
+		this.status=status;
 	}
 
 	
 	public Money(){
 		super();
 	}
-
-
-
 
 	public long getMoney_id() {
 		return money_id;
@@ -92,6 +91,22 @@ public class Money implements Parcelable {
 		this.type = type;
 	}
 
+//	public long getCategory_id() {
+//		return category_id;
+//	}
+//
+//	public void setCategory_id(long category_id) {
+//		this.category_id = category_id;
+//	}
+
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
 	//Parcelable part
 
 	public Money(Parcel in){
@@ -102,6 +117,7 @@ public class Money implements Parcelable {
 		this.date = (Date) in.readSerializable();
 		this.rule = in.readString();
 		this.type = in.readString();
+		this.status=in.readInt();
 	}
 
 	@Override
@@ -118,6 +134,7 @@ public class Money implements Parcelable {
 		dest.writeSerializable(this.date);
 		dest.writeString(this.rule);
 		dest.writeString(this.type);
+		dest.writeInt(this.status);
 
 	}
 	public static final Parcelable.Creator<Money> CREATOR = new Parcelable.Creator<Money>() {

@@ -71,12 +71,12 @@
 	     <item>Your account4</item>
 	</string-array>
 	
-	<string-array name="reminders"> 
-	    <item>Don\'t remind</item>
-	    <item>Same day</item>
-	    <item>One day before</item>
-	    <item>One week before</item>
-	     <item>Each month</item>
+	<string-array name="period">
+	    <item>Period</item>
+	    <item>Week</item>
+	    <item>Month</item>
+		<item>Year</item>
+
 	</string-array>
 	<string-array name="rules">
 	    <item>Monthly</item>

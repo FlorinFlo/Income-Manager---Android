@@ -3,7 +3,7 @@ package model;
 import java.util.Date;
 
 /**
- * Created by Florea on 11/9/2015.
+ * Created by Florea on 11/16/2015.
  */
 public class Balance {
     private double amount;

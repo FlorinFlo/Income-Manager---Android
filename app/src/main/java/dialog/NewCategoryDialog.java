@@ -47,10 +47,14 @@ public class NewCategoryDialog extends Dialog implements ColorPicker.OnColorChan
         btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(spinner==null){
+                    boolean newCategory = service.contentProvider().createNewCategory(newCategoryText.getText().toString(), categoryColor,context);
+                }else{
+                    boolean newCategory = service.contentProvider().createNewCategory(newCategoryText.getText().toString(), categoryColor,context);
+                    Log.w("",""+newCategory);
+                    service.populateSpinnerCategory(spinner,context);
+                }
 
-                boolean newCategory = service.contentProvider().createNewCategory(newCategoryText.getText().toString(), categoryColor,context);
-                Log.w("",""+newCategory);
-                service.populateSpinnerCategory(spinner,context);
                 dismiss();
 
             }

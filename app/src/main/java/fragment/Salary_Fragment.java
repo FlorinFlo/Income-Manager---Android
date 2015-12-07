@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -20,9 +19,8 @@ import android.widget.ToggleButton;
 import com.example.incomemanager.R;
 
 import java.util.Calendar;
+import java.util.Date;
 
-import incomemanager.Income_Activity;
-import model.Category;
 import service.Service;
 
 public class Salary_Fragment extends Fragment {
@@ -59,7 +57,7 @@ public class Salary_Fragment extends Fragment {
 		timeNow= (TextView) getView().findViewById(R.id.time_now);
 		service.setTime(timeNow,service.getTimeNow(calendar)[0], service.getTimeNow(calendar)[1]);
 		dateField=(EditText)getView().findViewById(R.id.salary_date);
-		service.initiateDate(dateField, getActivity());
+		service.initiateDate(dateField, getActivity(),new Date());
 		togggle= (ToggleButton) getView().findViewById(R.id.toggle_repeat);
 
 		togggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -80,7 +78,7 @@ public class Salary_Fragment extends Fragment {
 							dataPass.onTimePass(hourOfDay,minute);
 
 						}
-					},hour,minute,true);
+					},service.getTimeNow(calendar)[0],service.getTimeNow(calendar)[1],true);
 					timePicker.setTitle("Select time");
 					timePicker.show();
 					dataPass.onDataPass(repeatAlarm);
@@ -96,23 +94,7 @@ public class Salary_Fragment extends Fragment {
 
 			}
 		});
-		spinnerCat= (Spinner) getView().findViewById(R.id.salary_category);
-		service.populateSpinnerCategory(spinnerCat,getActivity());
-		spinnerCat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
-			Category category;
 
-			@Override
-			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-				category= (Category) parent.getItemAtPosition(position);
-			((Income_Activity)getActivity()).setCategory(category.getCategory_id());
-		}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> parent) {
-				category= (Category) parent.getItemAtPosition(0);
-				((Income_Activity)getActivity()).setCategory(category.getCategory_id());
-			}
-		});
 
 
 

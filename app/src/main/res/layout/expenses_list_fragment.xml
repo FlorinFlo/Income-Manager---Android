@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent" android:layout_height="wrap_content">
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -8,13 +9,109 @@
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin" >
+        android:paddingTop="@dimen/activity_vertical_margin">
 
-    <TextView
-        android:id="@+id/text_rule"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="20dip"
-        android:text="@string/rule" />
+        <Spinner
+            android:id="@+id/spinner_category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="20dp"
+
+            />
+
+        <Spinner
+            android:id="@+id/spinner_period"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/spinner_category"
+            android:layout_alignParentRight="true"
+            android:entries="@array/period"
+            />
+        <LinearLayout
+            android:id="@+id/period"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/spinner_category">
+
+
+            <EditText
+                android:id="@+id/date_before"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/spinner_category"
+                android:clickable="true"
+                android:focusable="false"
+                />
+            <TextView
+                android:id="@+id/divider"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" - "
+                android:layout_toRightOf="@id/date_before"
+                android:layout_alignBaseline="@+id/date_before"/>
+            <EditText
+                android:id="@+id/date_after"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/divider"
+                android:layout_alignBaseline="@+id/date_before"
+                android:clickable="true"
+                android:focusable="false"
+                />
+
+        </LinearLayout>
+
+
+        <View
+            android:id="@+id/div"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_below="@id/period"/>
+
+        <RelativeLayout
+            android:id="@+id/graph_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_below="@id/div"
+            android:layout_centerInParent="true">
+        <graphics.PieGraph
+            android:id="@+id/pie_graph"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            />
+        <TextView
+            android:id="@+id/value_slice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textStyle="bold"
+            />
+
+         <graphics.BarGraph
+             android:id="@+id/bar_graph"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:visibility="gone"
+
+             />
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_below="@id/graph_layout"
+            />
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            />
     </RelativeLayout>
 </ScrollView>

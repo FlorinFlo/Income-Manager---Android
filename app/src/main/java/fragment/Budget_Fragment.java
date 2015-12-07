@@ -12,9 +12,9 @@ import com.example.incomemanager.R;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 import contentprovider.MyMonetaryContentProvider;
+import incomemanager.MainActivity;
 import model.Money;
 import service.Service;
 
@@ -23,12 +23,12 @@ import service.Service;
  */
 public class Budget_Fragment extends Fragment {
 
-    private int curentMonth=0;
+    private int curentMonth = 0;
     private Calendar calendar;
     private ArrayList<Money> expenses;
     private Service service = Service.getInstance();
-    private MyMonetaryContentProvider contentProvider=service.contentProvider();
-    private String [] budgetArray;
+    private MyMonetaryContentProvider contentProvider = service.contentProvider();
+    private String[] budgetArray;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,31 +37,60 @@ public class Budget_Fragment extends Fragment {
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
 
-
-        return inflater.inflate(R.layout.budget_fragment,container,false);
+        return inflater.inflate(R.layout.budget_fragment, container, false);
     }
 
     @Override
-    public void onStart(){
-    super.onStart();
+    public void onStart() {
+        super.onStart();
+
         updateTime();
-        Button btn= (Button) getActivity().findViewById(R.id.today_expenses);
-        Button btnBalance= (Button) getActivity().findViewById(R.id.current_balance);
-        btn.append(service.appendTextColor("5000","#ff0000"));
-        Date date=new Date();
-        //contentProvider.getExpenses();
+        Button btnTExpense = (Button) getActivity().findViewById(R.id.today_expenses);
 
-        contentProvider.updateBalance(10,date);
-        contentProvider.getSavedBalance(getActivity(), date);
+        Button btnBalance = (Button) getActivity().findViewById(R.id.current_balance);
+
+        Button btnWIncomes = (Button) getActivity().findViewById(R.id.week_incomes);
+
+        Button btnMIncomes = (Button) getActivity().findViewById(R.id.month_incomes);
+
+        Button btnWExpense = (Button) getActivity().findViewById(R.id.week_expenses);
+
+        Button btnMExpense = (Button) getActivity().findViewById(R.id.month_expenses);
+
+        contentProvider.getAmountMonth();
+
+        String balance = String.valueOf(((MainActivity) getActivity()).getBalance().getAmount());
+        service.cleanButton(btnBalance, balance);
+
+        updateBtnWeek(btnWIncomes, "Income");
+        updateBtnMonth(btnMIncomes, "Income");
+        updateBtnWeek(btnWExpense, "Expense");
+        updateBtnMonth(btnMExpense, "Expense");
 
 
-
+        String amountToday = String.valueOf(service.getAmountExpToday());
+        service.cleanButton(btnTExpense, amountToday);
 
 
     }
-    public void updateTime(){
-        calendar= Calendar.getInstance();
-        curentMonth=calendar.get(Calendar.MONTH)+1;
+
+    private void updateTime() {
+        calendar = Calendar.getInstance();
+        curentMonth = calendar.get(Calendar.MONTH) + 1;
     }
+
+    private void updateBtnWeek(Button button, String type) {
+        String amount = String.valueOf(service.getAmountWeek(type));
+        service.cleanButton(button, amount);
+
+    }
+
+    private void updateBtnMonth(Button button, String type) {
+
+        String amount = String.valueOf(service.getAmountMonth(type));
+        service.cleanButton(button, amount);
+    }
+
+
 }
 

@@ -24,12 +24,14 @@ import com.example.incomemanager.R;
 import java.util.ArrayList;
 
 import contentprovider.MyMonetaryContentProvider;
+import dialog.NewCategoryDialog;
 import model.Category;
 import service.Service;
 
 public class Settings_Activity extends ActionBarActivity {
 
 	private ActionBar actionBar;
+	private Dialog categoryDialog;
 
 	private Service service = Service.getInstance();
 	private MyMonetaryContentProvider contentProvider=service.contentProvider();
@@ -38,7 +40,7 @@ public class Settings_Activity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.settings_activity);
+		setContentView(R.layout.activity_settings);
 
 	}
 
@@ -54,11 +56,11 @@ public class Settings_Activity extends ActionBarActivity {
 	}
 
 	public void openEditCat(View v) {
-
+		ArrayList<Category> dbList=contentProvider.getCategories(this);
 		ArrayList<Category> categoryList = new ArrayList<Category>();
 		MyListViewAdapter adapter = new MyListViewAdapter(this, categoryList);
 
-		Dialog categoryDialog = new Dialog(this);
+		categoryDialog = new Dialog(this);
 		categoryDialog.setContentView(R.layout.category_list);
 
 		ListView categories = (ListView) categoryDialog.findViewById(R.id.lv);
@@ -71,10 +73,11 @@ public class Settings_Activity extends ActionBarActivity {
 				"#FFFFFF");
 		categoryList.add(newCategory);
 
+
+
 		
-		for (int i = 0; i < contentProvider.getCategories(this).size(); i++) {
-			
-			Category cat = contentProvider.getCategories(this).get(i);
+		for (int i = 0; i < dbList.size(); i++) {
+			Category cat = dbList.get(i);
 			categoryList.add(cat);
 			adapter.notifyDataSetChanged();
 
@@ -85,6 +88,7 @@ public class Settings_Activity extends ActionBarActivity {
 	}
 
 	public void onClick(AdapterView<?> parent, View view, int position, long id) {
+
 		CharSequence text = "Item clicked" + view.getTag();
 	}
 
@@ -142,7 +146,13 @@ public class Settings_Activity extends ActionBarActivity {
 
 				@Override
 				public void onClick(View v) {
-					Log.w("CLICKED", "Helllo" + v.getTag());
+					if (v.getTag().toString().equals("0")) {
+						Log.w("CLICKED", "Helllo New category" + v.getTag() + "????");
+						categoryDialog.dismiss();
+						NewCategoryDialog d=new NewCategoryDialog(context,null);
+
+					}
+
 
 				}
 			});

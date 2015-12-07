@@ -12,6 +12,8 @@ import android.widget.Spinner;
 
 import com.example.incomemanager.R;
 
+import java.util.Date;
+
 import incomemanager.Income_Activity;
 import model.Category;
 import service.Service;
@@ -55,7 +57,7 @@ public class OtherIncome_Fragment extends Fragment {
 		 });
 		dateField=(EditText)getView().findViewById(R.id.date);
 
-		service.initiateDate(dateField, getActivity());				
+		service.initiateDate(dateField, getActivity(),new Date());
 		super.onStart();
 	}
 
