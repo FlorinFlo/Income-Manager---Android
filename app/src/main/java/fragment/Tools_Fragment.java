@@ -24,5 +24,8 @@ public class Tools_Fragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
+
     }
+
+
 }

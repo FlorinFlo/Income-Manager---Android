@@ -18,7 +18,7 @@
            android:padding="10dip"
            android:text="Current balance : "
            android:textColor="@color/material_blue_grey_800"
-           android:background="@drawable/mybutton"
+           android:background="@drawable/rounded_button"
            android:layout_marginBottom="10dp"
            android:clickable="false"
            />
@@ -31,7 +31,7 @@
             android:text="This week incomes : "
             android:textColor="@color/material_blue_grey_800"
             android:layout_below="@+id/current_balance"
-            android:background="@drawable/mybutton"
+            android:background="@drawable/rounded_button"
             android:layout_marginBottom="10dp"
             android:onClick="showWIncomes"
             />
@@ -44,7 +44,7 @@
             android:text="This month incomes : "
             android:textColor="@color/material_blue_grey_800"
             android:layout_below="@+id/week_incomes"
-            android:background="@drawable/mybutton"
+            android:background="@drawable/rounded_button"
             android:layout_marginBottom="10dp"
             android:onClick="showMIncomes"
             />
@@ -57,7 +57,7 @@
             android:text="This week expenses : "
             android:textColor="@color/material_blue_grey_800"
             android:layout_below="@+id/month_incomes"
-            android:background="@drawable/mybutton"
+            android:background="@drawable/rounded_button"
             android:layout_marginBottom="10dp"
             android:onClick="showWExpense"
             />
@@ -70,7 +70,7 @@
             android:text="This month expenses : "
             android:textColor="@color/material_blue_grey_800"
             android:layout_below="@+id/week_expenses"
-            android:background="@drawable/mybutton"
+            android:background="@drawable/rounded_button"
             android:layout_marginBottom="10dp"
             android:onClick="showMExpense"
             />
@@ -83,7 +83,7 @@
             android:text="Today expenses : "
             android:textColor="@color/material_blue_grey_800"
             android:layout_below="@+id/month_expenses"
-            android:background="@drawable/mybutton"
+            android:background="@drawable/rounded_button"
             android:onClick="showTExpense"
             />
 

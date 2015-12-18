@@ -19,6 +19,7 @@ import com.example.incomemanager.R;
 import java.util.Date;
 
 import contentprovider.MyMonetaryContentProvider;
+import dialog.CalculatorDialog;
 import model.Balance;
 import model.Money;
 import service.MyFragmentPageAdapter;
@@ -173,6 +174,9 @@ public class MainActivity extends ActionBarActivity {
         intent_income.putExtra("scope",scope);
         intent_income.putExtra("duration",duration);
         startActivity(intent_income);
+    }
+    public void openCalculator(View view){
+        CalculatorDialog cal=new CalculatorDialog(activity);
     }
 
 }

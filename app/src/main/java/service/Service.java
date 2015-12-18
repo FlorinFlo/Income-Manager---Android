@@ -3,6 +3,7 @@ package service;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -16,7 +17,10 @@ import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -45,6 +49,7 @@ import graphics.PieSlice;
 import incomemanager.RescheduleAlarm_Activity;
 import model.Balance;
 import model.Category;
+import model.GraphValue;
 import model.Money;
 
 public class Service {
@@ -111,7 +116,6 @@ public class Service {
     public void initiateDate(final EditText dateField, final Context context, Date date1) {
 
         dateFormater = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-        Log.w("Hello1","XXX");
 
         dateField.setText(dateFormater.format(date1));
 
@@ -131,7 +135,7 @@ public class Service {
                         myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
                         // Update text
-                        Log.w("Hello2","XXX");
+
                         dateField.setText(dateFormater.format(new Date(
                                 myCalendar.getTimeInMillis())));
 
@@ -168,29 +172,29 @@ public class Service {
 
         switch (month) {
             case 1:
-                return "January";
+                return "Jan";
             case 2:
-                return "February";
+                return "Feb";
             case 3:
-                return "March";
+                return "Mar";
             case 4:
-                return "April";
+                return "Apr";
             case 5:
                 return "May";
             case 6:
-                return "June";
+                return "Jun";
             case 7:
-                return "July";
+                return "Jul";
             case 8:
-                return "August";
+                return "Aug";
             case 9:
-                return "September";
+                return "Sep";
             case 10:
-                return "Octomber";
+                return "Oct";
             case 11:
-                return "November";
+                return "Nov";
             case 12:
-                return "December";
+                return "Dec";
             default:
                 break;
         }
@@ -388,7 +392,7 @@ public class Service {
             builder.setContentIntent(pIntent);
             builder.setAutoCancel(true);
             builder.setSound(sound);
-            builder.addAction(R.drawable.ic_action_postpone, "Postpone", pIntent).build();
+           // builder.addAction(R.drawable.ic_action_postpone, "Postpone", pIntent).build();
 
 
             NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -518,7 +522,6 @@ public class Service {
     public double getAmountWeek(String type) {
         Date date = new Date();
         listWeekIncExp = contentProvider.getWeekIncomesExpenses(date);
-        Log.w("AMOUNT", ":" + getAmountFromList(listWeekIncExp, type));
         return getAmountFromList(listWeekIncExp, type);
     }
 
@@ -604,24 +607,43 @@ public class Service {
         return returnList;
     }
 
-    public void initiateChart(Activity activity,Category selectedCategory,Date date1 ,Date date2) {
-        final PieGraph pg= (PieGraph) activity.findViewById(R.id.pie_graph);
-        final TextView text= (TextView) activity.findViewById(R.id.value_slice);
-        final BarGraph bg= (BarGraph) activity.findViewById(R.id.bar_graph);
-        ArrayList<Money> expenses = contentProvider.getExpensesForPeriod(date1,date2);
+    public void initiateChart(final Activity activity, Category selectedCategory, Date date1, Date date2) {
 
-        if(selectedCategory.getColor()==null){
+        final PieGraph pg = (PieGraph) activity.findViewById(R.id.pie_graph);
+        final TextView text = (TextView) activity.findViewById(R.id.value_slice);
+        final TextView bartext= (TextView) activity.findViewById(R.id.bar_category);
+        final EditText dateText1= (EditText) activity.findViewById(R.id.date_after);
+        final EditText dateText2= (EditText) activity.findViewById(R.id.date_before);
+        final TextView textFrom= (TextView) activity.findViewById(R.id.text_to);
+        final TextView textTo= (TextView) activity.findViewById(R.id.text_from);
+        final Spinner spinner= (Spinner) activity.findViewById(R.id.spinner_period);
 
+        final BarGraph bg = (BarGraph) activity.findViewById(R.id.bar_graph);
+
+        
+
+        if (selectedCategory == null) {
+
+            pg.setVisibility(View.VISIBLE);
+            text.setVisibility(View.VISIBLE);
+            bg.setVisibility(View.GONE);
+            bartext.setVisibility(View.GONE);
+            dateText1.setVisibility(View.VISIBLE);
+            dateText2.setVisibility(View.VISIBLE);
+            textTo.setVisibility(View.VISIBLE);
+            textFrom.setVisibility(View.VISIBLE);
+            spinner.setVisibility(View.VISIBLE);
             pg.removeSlices();
-            Map<Long,Double> catAmountMap=getExpensesCategoryWithAmount(expenses);
+            ArrayList<Money> expenses = contentProvider.getExpensesForPeriod(date1, date2);
+            Map<Long, Double> catAmountMap = getExpensesCategoryWithAmount(expenses);
 
-            if(catAmountMap.size()>0){
+            if (catAmountMap.size() > 0) {
 
-                for(Long key :catAmountMap.keySet()){
+                for (Long key : catAmountMap.keySet()) {
 
-                    Category category=contentProvider.getCategoryForId(key);
+                    Category category = contentProvider.getCategoryForId(key);
 
-                    PieSlice slice=new PieSlice();
+                    PieSlice slice = new PieSlice();
 
                     slice.setColor(Color.parseColor(category.getColor()));
                     slice.setTitle(category.getName());
@@ -633,7 +655,7 @@ public class Service {
 
                 }
 
-                final Activity activ=activity;
+                final Activity activ = activity;
 
                 pg.setOnSliceClickedListener(new PieGraph.OnSliceClickedListener() {
 
@@ -663,20 +685,42 @@ public class Service {
 
 
             }
-        }else{
+        } else {
 
             pg.setVisibility(View.GONE);
             text.setVisibility(View.GONE);
-            ArrayList<Bar> points=new ArrayList<>();
+            dateText1.setVisibility(View.GONE);
+            dateText2.setVisibility(View.GONE);
+            textTo.setVisibility(View.GONE);
+            textFrom.setVisibility(View.GONE);
+            spinner.setVisibility(View.GONE);
 
+            bg.setVisibility(View.VISIBLE);
+            bartext.setVisibility(View.VISIBLE);
+            dateText1.setVisibility(View.GONE);
+            bartext.setText(selectedCategory.getName());
+            View.OnClickListener first=new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    openCategoryList(activity);
+                }
+            };
+            bartext.setOnClickListener(first);
 
+            final ArrayList<Bar> points = new ArrayList<>();
+            ArrayList<GraphValue> expense=getExpensesPerMonths(new Date());
+            for (GraphValue gv:expense) {
+                Bar b=new Bar();
+                b.setColor(Color.parseColor(selectedCategory.getColor()));
+                b.setName(gv.getMonth() + " " + gv.getYear());
+                b.setValue(gv.getAmount());
+                b.setValuePrefix("$");
 
+                points.add(b);
+            }
 
-
-
-
+            bg.setBars(points);
         }
-
 
 
     }
@@ -691,7 +735,7 @@ public class Service {
                     double amount = categoryMap.get(m.getCategory());
                     categoryMap.put(m.getCategory(), amount + m.getAmount());
                 } else {
-                    Log.w("Does not contain","True");
+
                     categoryMap.put(m.getCategory(), m.getAmount());
                 }
 
@@ -700,37 +744,183 @@ public class Service {
         return categoryMap;
     }
 
-    public String getPeriod(Date dateBefore,Date dateAfter){
+    public String getPeriod(Date dateBefore, Date dateAfter) {
 
-        String period="other";
-        Calendar calBefore=Calendar.getInstance();
-        Calendar calAfter=Calendar.getInstance();
+        String period = "other";
+        Calendar calBefore = Calendar.getInstance();
+        Calendar calAfter = Calendar.getInstance();
 
         calBefore.setTime(dateBefore);
         calAfter.setTime(dateAfter);
 
-        if(calBefore.compareTo(substractWeek(calAfter))==0){
-            period="week";
+        if (calBefore.compareTo(substractWeek(calAfter)) == 0) {
+            Log.w("Period", "Week");
+            period = "week";
         }
         calAfter.setTime(dateAfter);
-        if(calBefore.compareTo(substractMonth(calAfter))==0){
-            period="month";
+        if (calBefore.compareTo(substractMonth(calAfter)) == 0) {
+            Log.w("Period", "Month");
+            period = "month";
 
+        }
+        calAfter.setTime(dateAfter);
+        if(calBefore.compareTo(substractYear(calAfter))==0){
+            Log.w("Period", "Year");
+            period="year";
         }
 
         return period;
     }
 
-    public Calendar substractWeek(Calendar calendar){
+    public Calendar substractWeek(Calendar calendar) {
         calendar.add(Calendar.WEEK_OF_YEAR, -1);
         return calendar;
     }
-    public Calendar substractMonth(Calendar calendar){
-        Log.w("CAlendar Month0 ",".."+calendar.get(Calendar.MONTH));
-        calendar.add(Calendar.MONTH,-1);
-        Log.w("CAlendar Month1 ",".."+calendar.get(Calendar.MONTH));
+
+    public Calendar substractMonth(Calendar calendar) {
+        calendar.add(Calendar.MONTH, -1);
+        return calendar;
+    }
+    public Calendar substractYear(Calendar calendar){
+        calendar.add(Calendar.YEAR,-1);
         return calendar;
     }
 
+    public ArrayList<GraphValue> getExpensesPerMonths(Date date) {
+
+        Calendar cal=Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.YEAR, -1);
+        ArrayList<GraphValue>expenses = new ArrayList<>();
+        Calendar tempCalendar=Calendar.getInstance();
+        tempCalendar.setTime(date);
+        int month=0;
+        double amount=0;
+
+
+        for(int j=0;j<5;j++){
+            month=tempCalendar.get(Calendar.MONTH)+1;
+
+
+            amount= contentProvider.getAmountMonth(month,Integer.valueOf(tempCalendar.get(Calendar.YEAR)),null);
+            GraphValue gv=new GraphValue(getMonths(month),String.valueOf(tempCalendar.get(Calendar.YEAR)),(float)amount);
+            expenses.add(gv);
+            tempCalendar.add(Calendar.MONTH, -1);
+
+
+        }
+
+
+
+        return expenses;
 
     }
+
+    public Date substractOneMonthFromDate(Date date){
+        Calendar calendar=Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MONTH,-1);
+        return new Date(calendar.getTimeInMillis());
+    }
+
+
+    public void openCategoryList(Activity activity) {
+        ArrayList<Category> dbList=contentProvider().getCategories(activity);
+        ArrayList<Category> categoryList = new ArrayList<Category>();
+        Dialog categoryDialog = new Dialog(activity);
+        MyListViewAdapter adapter = new MyListViewAdapter(activity,categoryList,categoryDialog);
+
+        categoryDialog.setContentView(R.layout.category_list);
+
+        ListView categories = (ListView) categoryDialog.findViewById(R.id.lv);
+        categoryDialog.setCancelable(true);
+
+        categoryDialog.setTitle("Categories");
+
+        categories.setAdapter(adapter);
+
+        for (int i = 0; i < dbList.size(); i++) {
+            Category cat = dbList.get(i);
+            categoryList.add(cat);
+            adapter.notifyDataSetChanged();
+
+        }
+
+        categoryDialog.show();
+
+    }
+
+    private class MyListViewAdapter extends BaseAdapter {
+
+        private Context context;
+        private Activity activity;
+        private ArrayList<Category> listData;
+        private LayoutInflater inflater = null;
+        private Dialog categoryDialog;
+
+
+        protected MyListViewAdapter(Activity activity, ArrayList<Category> data,Dialog categoryDialog) {
+            this.activity=activity;
+            context=activity;
+            this.listData = data;
+            this.categoryDialog=categoryDialog;
+            inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        @Override
+        public int getCount() {
+
+            return listData.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+
+            return listData.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+
+            return listData.get(position).getCategory_id();
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View returningView = convertView;
+            if (returningView == null) {
+                returningView = inflater.inflate(R.layout.list_row_settings, null);
+
+            }
+            TextView text = (TextView) returningView
+                    .findViewById(R.id.cat_text);
+            String textString = listData.get(position).getName();
+            text.setText(textString);
+
+            Button imgBtn = (Button) returningView.findViewById(R.id.img_btn);
+            imgBtn.setText(listData.get(position).getName().substring(0, 1));
+            imgBtn.setBackgroundColor(Color.parseColor(
+                    listData.get(position).getColor()));
+            returningView.setTag(listData.get(position).getCategory_id());
+
+            returningView.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+
+                    initiateChart(activity, contentProvider().getCategoryForId((Long) v.getTag()), null, null);
+
+                    categoryDialog.dismiss();
+
+
+                }
+            });
+
+            return returningView;
+        }
+
+    }
+
+
+}

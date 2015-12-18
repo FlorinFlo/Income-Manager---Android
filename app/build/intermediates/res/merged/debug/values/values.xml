@@ -28,10 +28,10 @@
 	    <item>Unpaid</item>
 	</string-array>
     <string-array name="period">
-	    <item>Period</item>
 	    <item>Week</item>
 	    <item>Month</item>
 		<item>Year</item>
+		<item>Period</item>
 
 	</string-array>
     <string-array name="rules">

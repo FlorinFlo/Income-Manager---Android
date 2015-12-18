@@ -725,10 +725,11 @@ public class MyMonetaryContentProvider extends ContentProvider {
         return expenses;
     }
 
-    public void getAmountMonth(){
+    public double getAmountMonth(int month,int year ,Category category){
         double amount=0;
 
-        Cursor cursor= db.query(MonetaryTable.TABLE_MONETARY,new String[]{"sum(amount)"},"type='Expense'",null,null,null,null);
+        Cursor cursor= db.query(MonetaryTable.TABLE_MONETARY,new String[]{"sum(amount)"},
+                "type='Expense' AND strftime('%m',date)=? AND strftime('%Y',date)=? ",new String []{ String.valueOf(month),String.valueOf(year)},null,null,null);
         Log.w("HELLO AMOUNT",""+cursor.getCount());
         if(cursor.moveToFirst()){
             do {
@@ -740,6 +741,6 @@ public class MyMonetaryContentProvider extends ContentProvider {
             cursor.close();
         }
 
-
+    return amount;
     }
 }

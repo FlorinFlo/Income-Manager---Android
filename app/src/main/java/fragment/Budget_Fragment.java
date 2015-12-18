@@ -57,7 +57,7 @@ public class Budget_Fragment extends Fragment {
 
         Button btnMExpense = (Button) getActivity().findViewById(R.id.month_expenses);
 
-        contentProvider.getAmountMonth();
+       // contentProvider.getAmountMonth(12,null);
 
         String balance = String.valueOf(((MainActivity) getActivity()).getBalance().getAmount());
         service.cleanButton(btnBalance, balance);

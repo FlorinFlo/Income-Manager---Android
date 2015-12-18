@@ -23,11 +23,6 @@ package graphics;
  under the License.
  */
 
-import java.util.ArrayList;
-
-import com.example.incomemanager.R;
-
-
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
@@ -50,6 +45,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+
+import com.example.incomemanager.R;
+
+import java.util.ArrayList;
 
 
 public class BarGraph extends View implements HoloGraphAnimate {
@@ -328,7 +327,7 @@ public class BarGraph extends View implements HoloGraphAnimate {
 
 			// Draw x-axis label text
 			if (mShowAxisLabel) {
-				mPaint.setColor(bar.getLabelColor());
+				mPaint.setColor(Color.BLACK);
 				mPaint.setTextSize(labelTextSize);
 				if (isAnimating())
 					mPaint.setAlpha(alpha);
