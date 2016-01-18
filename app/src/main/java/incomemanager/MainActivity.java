@@ -1,6 +1,7 @@
 package incomemanager;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -10,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +22,7 @@ import java.util.Date;
 
 import contentprovider.MyMonetaryContentProvider;
 import dialog.CalculatorDialog;
+import dialog.NotificationDialog;
 import model.Balance;
 import model.Money;
 import service.MyFragmentPageAdapter;
@@ -31,19 +34,15 @@ public class MainActivity extends ActionBarActivity {
 
     private ActionBar actionBar;
     private Activity activity = this;
-    private String tabTitle[] = {"Budget","Expenses","Tools"};
+    private String tabTitle[] = {"Budget","Expenses","Calculator"};
     private ViewPager mPager;
     private SlidingTabLayout mtabs;
     private Service service = Service.getInstance();
     private MyMonetaryContentProvider contentProvider=service.contentProvider();
     private Balance balance;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mPager= (ViewPager) findViewById(R.id.pager);
@@ -51,6 +50,9 @@ public class MainActivity extends ActionBarActivity {
         mtabs= (SlidingTabLayout) findViewById(R.id.tabs);
         mtabs.setDistributeEvenly(true);
         mtabs.setViewPager(mPager);
+
+
+
 
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -63,7 +65,7 @@ public class MainActivity extends ActionBarActivity {
                         service.getStringFromDate(date);
 
                         contentProvider.createCategoriesForFirstTime(activity, "category");
-                        Money money=new Money(-1,0.0,"Balance",date,"Weekly", "Balance",0);
+                        Money money=new Money(-1,0.0,"Balance",date,"Weekly", "Balance",1);
                         contentProvider.createIncomeExpense(money,activity);
                         }catch (Exception e){
 
@@ -81,7 +83,7 @@ public class MainActivity extends ActionBarActivity {
             balance=contentProvider.getSavedBalance(this);
         }
 
-       // contentProvider.getExpenses();
+
     }
 
     @Override
@@ -132,6 +134,19 @@ public class MainActivity extends ActionBarActivity {
 
     protected void onResume() {
         super.onResume();
+        Bundle bundle=getIntent().getExtras();
+        Log.w("Not null", "not" + bundle);
+        if(bundle!=null){
+            Log.w("Not null","not");
+            FragmentManager fm=getFragmentManager();
+            NotificationDialog notificationDialog=new NotificationDialog();
+            notificationDialog.setArguments(bundle);
+            notificationDialog.show(fm,"NotificationDialog");
+            getIntent().removeExtra("Money");
+            getIntent().removeExtra("hour");
+            getIntent().removeExtra("minute");
+        }
+
 
 
     }
@@ -176,7 +191,16 @@ public class MainActivity extends ActionBarActivity {
         startActivity(intent_income);
     }
     public void openCalculator(View view){
-        CalculatorDialog cal=new CalculatorDialog(activity);
+        FragmentManager fm=getFragmentManager();
+        CalculatorDialog cal=new CalculatorDialog();
+        cal.show(fm,"Calculator");
+
     }
 
-}
+
+
+
+
+    }
+
+

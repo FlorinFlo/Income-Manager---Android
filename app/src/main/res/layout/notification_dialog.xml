@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <View
+        android:id="@+id/div"
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="#C0C0C0"
+        android:layout_margin="3dp"
+        />
+    <TextView
+        android:id="@+id/not_info"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_margin="20dp"
+        android:gravity="center_horizontal"
+        android:text="You have an Expense due"
+        android:textStyle="bold" />
+
+
+    <TextView
+        android:id="@+id/text_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/not_info"
+        android:layout_marginLeft="10dp"
+        android:text="@string/amount"
+        android:textStyle="bold"/>
+
+    <EditText
+        android:id="@+id/not_amount"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_amount"
+        android:layout_margin="5dp"
+        android:background="@drawable/custom_edittext"
+        android:editable="true"
+        android:text="10000"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:focusableInTouchMode="true"
+        android:cursorVisible="false"/>
+
+    <TextView
+        android:id="@+id/not_notes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/not_amount"
+        android:layout_marginLeft="10dp"
+        android:text="Notes"
+        android:textStyle="bold"/>
+
+
+    <EditText
+        android:id="@+id/text_not_notes"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/not_notes"
+        android:layout_margin="5dp"
+        android:background="@drawable/custom_edittext"
+        android:editable="true"
+        android:inputType="textMultiLine"
+        android:scrollbars="horizontal"
+        android:text="s;jadlahsdjlahsldhaskldjhgasdklashgdjalkdsghkasgdkjhagshdjkagdkjhagsdkjsag"
+        android:verticalScrollbarPosition="right"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"
+        android:focusableInTouchMode="true"/>
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_not_notes">
+
+        <Button
+            android:id="@+id/post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_button"
+            android:text="Postpone"
+            android:textSize="12dp" />
+
+        <Button
+            android:id="@+id/paid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_button"
+            android:text="Paid" />
+
+        <Button
+            android:id="@+id/delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_button"
+            android:text="Delete" />
+    </LinearLayout>
+
+
+</RelativeLayout>

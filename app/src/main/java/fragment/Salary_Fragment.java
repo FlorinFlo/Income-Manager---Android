@@ -2,8 +2,10 @@ package fragment;
 
 import android.app.Activity;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,7 +65,7 @@ public class Salary_Fragment extends Fragment {
 		togggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
+				Log.w("Check",""+counter);
 				counter++;
 				if(counter%2!=0){
 
@@ -78,13 +80,23 @@ public class Salary_Fragment extends Fragment {
 							dataPass.onTimePass(hourOfDay,minute);
 
 						}
+
 					},service.getTimeNow(calendar)[0],service.getTimeNow(calendar)[1],true);
 					timePicker.setTitle("Select time");
+					timePicker.setOnCancelListener(new DialogInterface.OnCancelListener() {
+						@Override
+						public void onCancel(DialogInterface dialog) {
+
+
+							togggle.setChecked(false);
+						}
+					});
 					timePicker.show();
 					dataPass.onDataPass(repeatAlarm);
 
 
 				}else{
+
 					repeatAlarm=false;
 					dataPass.onDataPass(repeatAlarm);
 

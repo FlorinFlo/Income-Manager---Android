@@ -13,7 +13,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.w("Alarm","Alarm");
+        Log.w("Receive Alarm","Receiving");
         service.createNotification(context,intent);
     }
 

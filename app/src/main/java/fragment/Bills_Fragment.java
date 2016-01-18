@@ -1,6 +1,7 @@
 package fragment;
 
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -98,6 +99,12 @@ public class Bills_Fragment extends Fragment {
 						}
 					},service.getTimeNow(calendar)[0],service.getTimeNow(calendar)[1],true);
 					timePicker.setTitle("Select time");
+					timePicker.setOnCancelListener(new DialogInterface.OnCancelListener() {
+						@Override
+						public void onCancel(DialogInterface dialog) {
+							togggle.setChecked(false);
+						}
+					});
 
 					timePicker.show();
 					((Expenses_Activity) getActivity()).setReapeatingAlarm(repeatAlarm);

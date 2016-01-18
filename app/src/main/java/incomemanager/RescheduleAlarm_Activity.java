@@ -30,6 +30,7 @@ public class RescheduleAlarm_Activity extends Activity {
         service.createAlarm(this,money,hour,minute);
 
         Intent finalIntent=new Intent(this,MainActivity.class);
+        finalIntent.putExtra("Money",money);
         startActivity(finalIntent);
 
         this.finish();

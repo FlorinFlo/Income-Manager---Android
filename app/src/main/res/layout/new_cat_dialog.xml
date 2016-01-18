@@ -1,34 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:id="@+id/new_cat_dialog">
 
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
 
 
+        <View
+            android:id="@+id/div"
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="#C0C0C0"
+            android:layout_margin="3dp"
+
+            />
         <EditText
             android:id="@+id/categoryName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="Category name"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:hint="Category "
             android:layout_toRightOf="@+id/picker"
-            android:background="@android:drawable/dialog_holo_light_frame"
-
-
-
-
+            android:background="@drawable/custom_edittext"
+            android:inputType="textMultiLine"
+            android:scrollbars="horizontal"
+            android:layout_marginTop="25dp"
+            android:layout_marginRight="5dp"
+            android:gravity="center"
             />
         <graphics.ColorPicker
             android:id="@+id/picker"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_gravity="left"
-            android:padding="20dp"
+            android:layout_marginTop="10dp"
+
             />
 
         <graphics.SVBar
@@ -58,8 +65,6 @@
             android:orientation="horizontal"
             android:layout_below="@+id/picker"
             style="?android:attr/buttonBarButtonStyle"
-
-
             >
 
             <Button
@@ -68,8 +73,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text= "Ok"
-                android:background="@android:drawable/dialog_holo_light_frame"
+                android:background="@drawable/rounded_button"
                 style="?android:attr/buttonBarButtonStyle"
+                android:layout_margin="5dp"
                 />
 
             <Button
@@ -79,16 +85,17 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Cancel"
-                android:background="@android:drawable/dialog_holo_light_frame"
-                style="?android:attr/buttonBarButtonStyle"/>
+                android:background="@drawable/rounded_button"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_margin="5dp"/>
 
 
         </LinearLayout>
 
 
-    </RelativeLayout>
 
 
 
 
-</LinearLayout>
+
+</RelativeLayout>

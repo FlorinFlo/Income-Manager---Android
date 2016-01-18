@@ -46,7 +46,7 @@ import graphics.Bar;
 import graphics.BarGraph;
 import graphics.PieGraph;
 import graphics.PieSlice;
-import incomemanager.RescheduleAlarm_Activity;
+import incomemanager.MainActivity;
 import model.Balance;
 import model.Category;
 import model.GraphValue;
@@ -255,7 +255,7 @@ public class Service {
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        return calendar.get(Calendar.WEEK_OF_YEAR) - 1;
+        return calendar.get(Calendar.WEEK_OF_YEAR);
     }
 
     public int getDayNumber(Date date) {
@@ -277,7 +277,7 @@ public class Service {
         Calendar givenCalendar = Calendar.getInstance();
         givenCalendar.setTime(money.getDate());
         if (calendar.get(Calendar.YEAR) == givenCalendar.get(Calendar.YEAR)
-                && calendar.get(Calendar.DAY_OF_YEAR) >= givenCalendar.get(Calendar.DAY_OF_YEAR) && money.getStatus() == 1)
+                && calendar.get(Calendar.DAY_OF_YEAR) >= givenCalendar.get(Calendar.DAY_OF_YEAR) && money.getStatus() == 0)
             return true;
         else
             return false;
@@ -332,6 +332,7 @@ public class Service {
     }
 
     public void createAlarm(Context context, Money money, int hour, int minute) {
+
         try {
             Calendar calendar = Calendar.getInstance();
             Date dat = money.getDate();
@@ -350,7 +351,14 @@ public class Service {
             money.setDate(calendar.getTime());
             money.setStatus(0);
 
+
+
             AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+            contentProvider.createIncomeExpense(money, context);
+            money.setMoney_id(contentProvider().getMoneyIdFromDB(money));
+
+
 
             Intent intent = new Intent(context, AlarmReceiver.class);
             intent.putExtra("Money", money);
@@ -360,7 +368,9 @@ public class Service {
             alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
 
 
-            contentProvider.createIncomeExpense(money, context);
+
+
+
 
 
         } catch (Exception ex) {
@@ -369,22 +379,43 @@ public class Service {
 
 
     }
+    public void postponeAlarm(Context context, Money money, int hour, int minute){
+        Log.w("Postpone Alarm",""+money.getDate().toString()+"////"+hour+":"+minute);
+        Calendar calendar = Calendar.getInstance();
+        Date dat = money.getDate();
+        calendar.setTime(dat);
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
+        AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        intent.putExtra("Money", money);
+        intent.putExtra("hour", hour);
+        intent.putExtra("minute", minute);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+    }
+
 
     public void createNotification(Context context, Intent intent) {
         try {
             Bundle extra = intent.getExtras();
             Money money = extra.getParcelable("Money");
+
             String message = money.getNotes();
             String rule = money.getRule();
             int hour = extra.getInt("hour");
             int minute = extra.getInt("minute");
             String date = getStringFromDate(money.getDate());
             Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            Intent nextIntent = new Intent(context, RescheduleAlarm_Activity.class);
+            Intent nextIntent = new Intent(context, MainActivity.class);
+            nextIntent.addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP);
             nextIntent.putExtra("Money", money);
             nextIntent.putExtra("hour", hour);
             nextIntent.putExtra("minute", minute);
-            PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), nextIntent, 0);
+            PendingIntent pIntent = PendingIntent.
+                    getActivity(context, (int) System.currentTimeMillis(), nextIntent, 0);
+
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
             builder.setContentTitle("Income Manager");
             builder.setSmallIcon(R.drawable.ic_launcher);
@@ -392,7 +423,8 @@ public class Service {
             builder.setContentIntent(pIntent);
             builder.setAutoCancel(true);
             builder.setSound(sound);
-           // builder.addAction(R.drawable.ic_action_postpone, "Postpone", pIntent).build();
+
+
 
 
             NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -409,7 +441,7 @@ public class Service {
     public void addIncomeExpense(Context context, Money money) {
         contentProvider.createIncomeExpense(money, context);
         Balance balance;
-        if (checkUpdateBalance(money)) {
+
             balance = contentProvider.getSavedBalance(context);
             if (money.getType().equals("Income")) {
                 balance.setAmount(balance.getAmount() + money.getAmount());
@@ -420,7 +452,7 @@ public class Service {
             contentProvider.updateBalance(balance.getAmount(), money.getDate());
 
 
-        }
+
 
     }
 
@@ -611,16 +643,15 @@ public class Service {
 
         final PieGraph pg = (PieGraph) activity.findViewById(R.id.pie_graph);
         final TextView text = (TextView) activity.findViewById(R.id.value_slice);
-        final TextView bartext= (TextView) activity.findViewById(R.id.bar_category);
-        final EditText dateText1= (EditText) activity.findViewById(R.id.date_after);
-        final EditText dateText2= (EditText) activity.findViewById(R.id.date_before);
-        final TextView textFrom= (TextView) activity.findViewById(R.id.text_to);
-        final TextView textTo= (TextView) activity.findViewById(R.id.text_from);
-        final Spinner spinner= (Spinner) activity.findViewById(R.id.spinner_period);
+        final TextView bartext = (TextView) activity.findViewById(R.id.bar_category);
+        final EditText dateText1 = (EditText) activity.findViewById(R.id.date_after);
+        final EditText dateText2 = (EditText) activity.findViewById(R.id.date_before);
+        final TextView textFrom = (TextView) activity.findViewById(R.id.text_to);
+        final TextView textTo = (TextView) activity.findViewById(R.id.text_from);
+        final Spinner spinner = (Spinner) activity.findViewById(R.id.spinner_period);
 
         final BarGraph bg = (BarGraph) activity.findViewById(R.id.bar_graph);
 
-        
 
         if (selectedCategory == null) {
 
@@ -654,6 +685,7 @@ public class Service {
                     pg.setPadding(5);
 
                 }
+                setSlice(pg,text,0);
 
                 final Activity activ = activity;
 
@@ -663,27 +695,16 @@ public class Service {
                     public void onClick(int index) {
 
                         if (index != -1) {
-                            String value = Float.toString(pg.getSlice(index)
-                                    .getValue());
-                            String title = pg.getSlice(index).getTitle()
-                                    .toString();
-
-                            text.setText(title + "\n " + value);
-
-                            text.setTextColor(pg.getSlice(index).getColor());
-
-                            text.setShadowLayer(2, 2, 2, Color.BLACK);
-
-                            text.setGravity(Gravity.CENTER_HORIZONTAL);
-
-                            //list.setAdapter(new ListAdapter(activ, expensesForChart));
-
+                           setSlice(pg,text,index);
                         }
 
                     }
+
                 });
 
 
+            } else {
+                text.setText("No expenses for this period");
             }
         } else {
 
@@ -699,7 +720,7 @@ public class Service {
             bartext.setVisibility(View.VISIBLE);
             dateText1.setVisibility(View.GONE);
             bartext.setText(selectedCategory.getName());
-            View.OnClickListener first=new View.OnClickListener() {
+            View.OnClickListener first = new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     openCategoryList(activity);
@@ -708,9 +729,9 @@ public class Service {
             bartext.setOnClickListener(first);
 
             final ArrayList<Bar> points = new ArrayList<>();
-            ArrayList<GraphValue> expense=getExpensesPerMonths(new Date());
-            for (GraphValue gv:expense) {
-                Bar b=new Bar();
+            ArrayList<GraphValue> expense = getExpensesPerMonths(new Date(), selectedCategory);
+            for (GraphValue gv : expense) {
+                Bar b = new Bar();
                 b.setColor(Color.parseColor(selectedCategory.getColor()));
                 b.setName(gv.getMonth() + " " + gv.getYear());
                 b.setValue(gv.getAmount());
@@ -764,9 +785,9 @@ public class Service {
 
         }
         calAfter.setTime(dateAfter);
-        if(calBefore.compareTo(substractYear(calAfter))==0){
+        if (calBefore.compareTo(substractYear(calAfter)) == 0) {
             Log.w("Period", "Year");
-            period="year";
+            period = "year";
         }
 
         return period;
@@ -781,29 +802,30 @@ public class Service {
         calendar.add(Calendar.MONTH, -1);
         return calendar;
     }
-    public Calendar substractYear(Calendar calendar){
-        calendar.add(Calendar.YEAR,-1);
+
+    public Calendar substractYear(Calendar calendar) {
+        calendar.add(Calendar.YEAR, -1);
         return calendar;
     }
 
-    public ArrayList<GraphValue> getExpensesPerMonths(Date date) {
+    public ArrayList<GraphValue> getExpensesPerMonths(Date date, Category category) {
 
-        Calendar cal=Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.add(Calendar.YEAR, -1);
-        ArrayList<GraphValue>expenses = new ArrayList<>();
-        Calendar tempCalendar=Calendar.getInstance();
+        ArrayList<GraphValue> expenses = new ArrayList<>();
+        Calendar tempCalendar = Calendar.getInstance();
         tempCalendar.setTime(date);
-        int month=0;
-        double amount=0;
+        int month = 0;
+        double amount = 0;
 
 
-        for(int j=0;j<5;j++){
-            month=tempCalendar.get(Calendar.MONTH)+1;
+        for (int j = 0; j < 5; j++) {
+            month = tempCalendar.get(Calendar.MONTH) + 1;
 
 
-            amount= contentProvider.getAmountMonth(month,Integer.valueOf(tempCalendar.get(Calendar.YEAR)),null);
-            GraphValue gv=new GraphValue(getMonths(month),String.valueOf(tempCalendar.get(Calendar.YEAR)),(float)amount);
+            amount = contentProvider.getAmountMonth(month, Integer.valueOf(tempCalendar.get(Calendar.YEAR)), category);
+            GraphValue gv = new GraphValue(getMonths(month), String.valueOf(tempCalendar.get(Calendar.YEAR)), (float) amount);
             expenses.add(gv);
             tempCalendar.add(Calendar.MONTH, -1);
 
@@ -811,24 +833,23 @@ public class Service {
         }
 
 
-
         return expenses;
 
     }
 
-    public Date substractOneMonthFromDate(Date date){
-        Calendar calendar=Calendar.getInstance();
+    public Date substractOneMonthFromDate(Date date) {
+        Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        calendar.add(Calendar.MONTH,-1);
+        calendar.add(Calendar.MONTH, -1);
         return new Date(calendar.getTimeInMillis());
     }
 
 
     public void openCategoryList(Activity activity) {
-        ArrayList<Category> dbList=contentProvider().getCategories(activity);
+        ArrayList<Category> dbList = contentProvider().getCategories(activity);
         ArrayList<Category> categoryList = new ArrayList<Category>();
         Dialog categoryDialog = new Dialog(activity);
-        MyListViewAdapter adapter = new MyListViewAdapter(activity,categoryList,categoryDialog);
+        MyListViewAdapter adapter = new MyListViewAdapter(activity, categoryList, categoryDialog);
 
         categoryDialog.setContentView(R.layout.category_list);
 
@@ -859,11 +880,11 @@ public class Service {
         private Dialog categoryDialog;
 
 
-        protected MyListViewAdapter(Activity activity, ArrayList<Category> data,Dialog categoryDialog) {
-            this.activity=activity;
-            context=activity;
+        protected MyListViewAdapter(Activity activity, ArrayList<Category> data, Dialog categoryDialog) {
+            this.activity = activity;
+            context = activity;
             this.listData = data;
-            this.categoryDialog=categoryDialog;
+            this.categoryDialog = categoryDialog;
             inflater = (LayoutInflater) context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
@@ -921,6 +942,21 @@ public class Service {
         }
 
     }
+    private void setSlice(PieGraph pg,TextView text,int index){
+        String value = Float.toString(pg.getSlice(index)
+                .getValue());
+        String title = pg.getSlice(index).getTitle()
+                .toString();
+
+        text.setText(title + "\n " + value);
+
+        text.setTextColor(pg.getSlice(index).getColor());
+
+        text.setShadowLayer(2, 2, 2, Color.BLACK);
+
+        text.setGravity(Gravity.CENTER_HORIZONTAL);
+    }
+
 
 
 }

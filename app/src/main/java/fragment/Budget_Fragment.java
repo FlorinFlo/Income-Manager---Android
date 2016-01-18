@@ -44,32 +44,7 @@ public class Budget_Fragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        updateTime();
-        Button btnTExpense = (Button) getActivity().findViewById(R.id.today_expenses);
 
-        Button btnBalance = (Button) getActivity().findViewById(R.id.current_balance);
-
-        Button btnWIncomes = (Button) getActivity().findViewById(R.id.week_incomes);
-
-        Button btnMIncomes = (Button) getActivity().findViewById(R.id.month_incomes);
-
-        Button btnWExpense = (Button) getActivity().findViewById(R.id.week_expenses);
-
-        Button btnMExpense = (Button) getActivity().findViewById(R.id.month_expenses);
-
-       // contentProvider.getAmountMonth(12,null);
-
-        String balance = String.valueOf(((MainActivity) getActivity()).getBalance().getAmount());
-        service.cleanButton(btnBalance, balance);
-
-        updateBtnWeek(btnWIncomes, "Income");
-        updateBtnMonth(btnMIncomes, "Income");
-        updateBtnWeek(btnWExpense, "Expense");
-        updateBtnMonth(btnMExpense, "Expense");
-
-
-        String amountToday = String.valueOf(service.getAmountExpToday());
-        service.cleanButton(btnTExpense, amountToday);
 
 
     }
@@ -91,6 +66,35 @@ public class Budget_Fragment extends Fragment {
         service.cleanButton(button, amount);
     }
 
+    public void onResume(){
+        super.onResume();
+        updateTime();
+        Button btnTExpense = (Button) getActivity().findViewById(R.id.today_expenses);
+
+        Button btnBalance = (Button) getActivity().findViewById(R.id.current_balance);
+
+        Button btnWIncomes = (Button) getActivity().findViewById(R.id.week_incomes);
+
+        Button btnMIncomes = (Button) getActivity().findViewById(R.id.month_incomes);
+
+        Button btnWExpense = (Button) getActivity().findViewById(R.id.week_expenses);
+
+        Button btnMExpense = (Button) getActivity().findViewById(R.id.month_expenses);
+
+        // contentProvider.getAmountMonth(12,null);
+
+        String balance = String.valueOf(((MainActivity) getActivity()).getBalance().getAmount());
+        service.cleanButton(btnBalance, balance);
+
+        updateBtnWeek(btnWIncomes, "Income");
+        updateBtnMonth(btnMIncomes, "Income");
+        updateBtnWeek(btnWExpense, "Expense");
+        updateBtnMonth(btnMExpense, "Expense");
+
+
+        String amountToday = String.valueOf(service.getAmountExpToday());
+        service.cleanButton(btnTExpense, amountToday);
+    }
 
 }
 

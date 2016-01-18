@@ -349,5 +349,6 @@ public class PieGraph extends View implements  HoloGraphAnimate {
 
     public interface OnSliceClickedListener {
         public abstract void onClick(int index);
+
     }
 }

@@ -10,6 +10,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -159,7 +160,7 @@ public class MyMonetaryContentProvider extends ContentProvider {
     public Uri insert(Uri uri, ContentValues values) {
         int uriType = sURI_MATCHER.match(uri);
         Uri doneUri;
-       // Log.w("Insert","INSERT"+uriType);
+        // Log.w("Insert","INSERT"+uriType);
 
 
         int rowsDeleted = 0;
@@ -169,7 +170,7 @@ public class MyMonetaryContentProvider extends ContentProvider {
             case MONETARYS:
 
                 id = db.insert(MonetaryTable.TABLE_MONETARY, null, values);
-               // Log.w("Insert","INSERT"+id);
+                // Log.w("Insert","INSERT"+id);
                 break;
 
             case CATEGORYS:
@@ -177,7 +178,7 @@ public class MyMonetaryContentProvider extends ContentProvider {
                 id = db.insert(CategoryTable.TABLE_CATEGORY, null, values);
                 break;
             case -1:
-               // Log.w("USsssss","ssss");
+                // Log.w("USsssss","ssss");
 
             default:
                 throw new IllegalArgumentException("Unknown URI" + uri);
@@ -255,10 +256,10 @@ public class MyMonetaryContentProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection,
                       String[] selectionArgs) {
-       // Log.w("HEllo upda","Uri:"+uri+"Content values:"+values);
-       // Log.w("Hello upda","selection:"+selection+"Selection ergs"+selectionArgs.length);
+        // Log.w("HEllo upda","Uri:"+uri+"Content values:"+values);
+        // Log.w("Hello upda","selection:"+selection+"Selection ergs"+selectionArgs.length);
         int uriType = sURI_MATCHER.match(uri);
-       // Log.w("URITYPE",""+uriType);
+        // Log.w("URITYPE",""+uriType);
 
         int rowsUpdadated = 0;
         switch (uriType) {
@@ -363,13 +364,13 @@ public class MyMonetaryContentProvider extends ContentProvider {
                         "Hotel", "Household", "Insurance", "Utilities"};
 
                 for (int i = 0; i < categoryNames.length; i++) {
-                   // Log.w("SERVICE", "categories size" + categoryNames.length);
+
                     ContentValues values = new ContentValues();
                     values.put(CategoryTable.COLUMN_NAME, categoryNames[i]);
                     values.put(CategoryTable.COLUMN_COLOR, colorList[i]);
                     Uri uri = context.getContentResolver().insert(
                             MyMonetaryContentProvider.CONTENT_URI_CAT, values);
-                   // Log.w("Categories CREATED", "yes");
+
                 }
 
             } catch (Exception e) {
@@ -455,9 +456,9 @@ public class MyMonetaryContentProvider extends ContentProvider {
 
     public void createIncomeExpense(Money money, Context context) {
 
-        String moneyAmount=String.valueOf(money.getAmount());
-        String moneyDate=service_.getStringFromDate(money.getDate());
-        Uri uri = null;
+        String moneyAmount = String.valueOf(money.getAmount());
+        String moneyDate = service_.getStringFromDate(money.getDate());
+
         ContentValues values = new ContentValues();
         values.put(MonetaryTable.COLUMN_AMOUNT, moneyAmount);
         values.put(MonetaryTable.COLUMN_NOTES, money.getNotes());
@@ -468,17 +469,15 @@ public class MyMonetaryContentProvider extends ContentProvider {
         values.put(MonetaryTable.COLUMN_STATUS, money.getStatus());
 
 
-
-        uri = context.getContentResolver().insert(
+        Uri uri = context.getContentResolver().insert(
                 MyMonetaryContentProvider.CONTENT_URI, values);
-
 
 
     }
 
     public void getExpenses() {
         ArrayList<Money> expenses = new ArrayList<Money>();
-       // Log.w("HELLO Expenses", "Monetary contetnprovicer");
+
         Cursor cursor = db
                 .query("monetary", null, null, null, null, null, null);
         cursor.moveToFirst();
@@ -493,13 +492,13 @@ public class MyMonetaryContentProvider extends ContentProvider {
                     .getColumnIndex(MonetaryTable.COLUMN_AMOUNT)));
             String date = (cursor.getString(cursor
                     .getColumnIndex(MonetaryTable.COLUMN_DATE)));
-            String rule=cursor.getString(cursor.getColumnIndex(MonetaryTable.COLUMN_RULE));
-            String type=cursor.getString(cursor.getColumnIndex(MonetaryTable.COLUMN_TYPE));
-            int status=cursor.getInt(cursor.getColumnIndex(MonetaryTable.COLUMN_STATUS));
+            String rule = cursor.getString(cursor.getColumnIndex(MonetaryTable.COLUMN_RULE));
+            String type = cursor.getString(cursor.getColumnIndex(MonetaryTable.COLUMN_TYPE));
+            int status = cursor.getInt(cursor.getColumnIndex(MonetaryTable.COLUMN_STATUS));
 
 
-//            Log.w("HELLO Expenses", Html.fromHtml("<html>ID:" + moneyId +"<br/>Date:"+ date + "<br/>Category:" + catMoney +
-//                    "<br/>Amount:" + amount+"<br/>Rule:"+rule+"<br/>Type:"+type+"<br/>Status:"+status+"</html>")+"");
+            Log.w("HELLO Expenses", Html.fromHtml("<html>ID:" + moneyId + "<br/>Date:" + date + "<br/>Category:" + catMoney +
+                    "<br/>Amount:" + amount + "<br/>Rule:" + rule + "<br/>Type:" + type + "<br/>Status:" + status + "</html>")+"");
 
             cursor.moveToNext();
 
@@ -511,17 +510,26 @@ public class MyMonetaryContentProvider extends ContentProvider {
     }
 
     public ArrayList<Money> getMonthIncomesExpenses(int month) {
+        getExpenses();
+        String monthValue;
+       if(month<10){
+           monthValue="0"+month;
+       }else {
+           monthValue=String.valueOf(month);
+       }
 
         ArrayList<Money> expenses = new ArrayList<>();
-        Cursor cursor = db.query(MonetaryTable.TABLE_MONETARY,
+        Cursor cursor = db.query("monetary",
                 new String[]{MonetaryTable.COLUMN_ID, MonetaryTable.COLUMN_CATEGORY,
                         MonetaryTable.COLUMN_AMOUNT, MonetaryTable.COLUMN_NOTES,
                         MonetaryTable.COLUMN_DATE, MonetaryTable.COLUMN_RULE,
                         MonetaryTable.COLUMN_TYPE, MonetaryTable.COLUMN_STATUS},
-                "strftime('%m',date)" + "=? AND type!='Balance'",
-                new String[]{String.valueOf(month)}
+                "strftime('%m',date)=? AND type!='Balance'",
+                new String[]{monthValue}
                 , MonetaryTable.COLUMN_ID, null, MonetaryTable.COLUMN_DATE + " DESC ", null);
+        Log.w("Cursor", "" + cursor);
         if (cursor.moveToFirst()) {
+
             do {
 
                 Money money = new Money();
@@ -541,37 +549,36 @@ public class MyMonetaryContentProvider extends ContentProvider {
                 money.setStatus(cursor.getInt(cursor.getColumnIndex(MonetaryTable.COLUMN_STATUS)));
 
                 expenses.add(money);
-//               Log.w("+++++++++++++Money ", Html.fromHtml("<html>ID:" + money.getMoney_id() + "<br/>Date:" + money.getDate() + "<br/>Category:" + money.getCategory_id() +
-//                       "<br/>Amount:" + money.getAmount() + "<br/>Rule:" + money.getRule() + "<br/>Type:" + money.getType() + "<br/>Status:" + money.getStatus() + "</html>") + "");
             } while (cursor.moveToNext());
 
         }
         if (cursor != null && !cursor.isClosed()) {
             cursor.close();
         }
+        Log.w("Expenses on month", expenses.size() + "");
         return expenses;
 
     }
 
     public Balance getSavedBalance(Context context) {
 
-        Balance balance=new Balance();
+        Balance balance = new Balance();
         Cursor cursor = db.query(MonetaryTable.TABLE_MONETARY,
-                new String[]{MonetaryTable.COLUMN_AMOUNT,MonetaryTable.COLUMN_DATE},
-                "type='Balance' ",null
+                new String[]{MonetaryTable.COLUMN_AMOUNT, MonetaryTable.COLUMN_DATE},
+                "type='Balance' ", null
                 , null, null, null);
         cursor.moveToFirst();
 
         if (cursor.getCount() > 0) {
 
             cursor.moveToFirst();
-             double amount = cursor.getDouble(cursor.getColumnIndex(MonetaryTable.COLUMN_AMOUNT));
-            String datebalance=cursor.getString(cursor.getColumnIndex(MonetaryTable.COLUMN_DATE));
-            Date balanceDate=service_.getDateFromString(datebalance);
+            double amount = cursor.getDouble(cursor.getColumnIndex(MonetaryTable.COLUMN_AMOUNT));
+            String datebalance = cursor.getString(cursor.getColumnIndex(MonetaryTable.COLUMN_DATE));
+            Date balanceDate = service_.getDateFromString(datebalance);
 
             balance.setAmount(amount);
             balance.setBalanceDate(balanceDate);
-        }else{
+        } else {
 
             balance.setAmount(0);
             balance.setBalanceDate(new Date());
@@ -583,29 +590,35 @@ public class MyMonetaryContentProvider extends ContentProvider {
 
     }
 
-    public void updateBalance( double amount,Date date){
+    public boolean updateBalance(double amount, Date date) {
 
-        String updateDate=service_.getStringFromDate(service_.getUpdateDate(date));
-        ContentValues cv=new ContentValues();
-        cv.put(MonetaryTable.COLUMN_AMOUNT,amount);
+
+        String updateDate = service_.getStringFromDate(service_.getUpdateDate(date));
+        ContentValues cv = new ContentValues();
+        cv.put(MonetaryTable.COLUMN_AMOUNT, amount);
         cv.put(MonetaryTable.COLUMN_DATE, updateDate);
-        db.update(MonetaryTable.TABLE_MONETARY, cv, "type='Balance'", null);
+        return db.update(MonetaryTable.TABLE_MONETARY, cv, "type='Balance'", null)>0;
 
     }
 
-    public ArrayList<Money> getWeekIncomesExpenses(Date date){
-        int weekOfYear= service_.getWeekOfYear(date);
-       // Log.w("+++++++++","get expenses on week "+weekOfYear);
-        ArrayList<Money> weekIncExp=new ArrayList<>();
-        Cursor cursor=db.query(MonetaryTable.TABLE_MONETARY,
-                new String[]{MonetaryTable.COLUMN_ID,MonetaryTable.COLUMN_CATEGORY,
-                        MonetaryTable.COLUMN_AMOUNT,MonetaryTable.COLUMN_NOTES,
-                        MonetaryTable.COLUMN_DATE,MonetaryTable.COLUMN_RULE,
-                        MonetaryTable.COLUMN_TYPE,MonetaryTable.COLUMN_STATUS},
-                "strftime('%W',date)" + "=? AND type!='Balance'" ,
-                new String[]{String.valueOf(weekOfYear)},MonetaryTable.COLUMN_ID
-                , null, MonetaryTable.COLUMN_DATE +" DESC ",null);
-        if(cursor.moveToFirst()){
+    public ArrayList<Money> getWeekIncomesExpenses(Date date) {
+        String week;
+        int weekOfYear = service_.getWeekOfYear(date);
+        if(weekOfYear<10){
+            week="0"+String.valueOf(weekOfYear);
+        }else{
+            week=String.valueOf(weekOfYear);
+        }
+        ArrayList<Money> weekIncExp = new ArrayList<>();
+        Cursor cursor = db.query(MonetaryTable.TABLE_MONETARY,
+                new String[]{MonetaryTable.COLUMN_ID, MonetaryTable.COLUMN_CATEGORY,
+                        MonetaryTable.COLUMN_AMOUNT, MonetaryTable.COLUMN_NOTES,
+                        MonetaryTable.COLUMN_DATE, MonetaryTable.COLUMN_RULE,
+                        MonetaryTable.COLUMN_TYPE, MonetaryTable.COLUMN_STATUS},
+                "strftime('%W',date)" + "=? AND type!='Balance' ",
+                new String[]{week}, MonetaryTable.COLUMN_ID
+                , null, MonetaryTable.COLUMN_DATE + " DESC ", null);
+        if (cursor.moveToFirst()) {
             do {
 
                 Money money = new Money();
@@ -632,27 +645,28 @@ public class MyMonetaryContentProvider extends ContentProvider {
         if (cursor != null && !cursor.isClosed()) {
             cursor.close();
         }
+        Log.w("How many per week", weekIncExp.size() + "");
         return weekIncExp;
 
     }
 
-    public ArrayList<Money> getIncExpWithStatus(){
-        ArrayList<Money> moneyList=new ArrayList<>();
-        Date date=new Date();
-        Calendar calendar=Calendar.getInstance();
+    public ArrayList<Money> getIncExpWithStatus() {
+        ArrayList<Money> moneyList = new ArrayList<>();
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        int dayNumber=calendar.get(Calendar.DAY_OF_YEAR);
-        int year=calendar.get(Calendar.YEAR);
-        Cursor cursor=db.query(MonetaryTable.TABLE_MONETARY,
-                new String[]{MonetaryTable.COLUMN_ID,MonetaryTable.COLUMN_CATEGORY,
-                        MonetaryTable.COLUMN_AMOUNT,MonetaryTable.COLUMN_NOTES,
-                        MonetaryTable.COLUMN_DATE,MonetaryTable.COLUMN_RULE,
-                        MonetaryTable.COLUMN_TYPE,MonetaryTable.COLUMN_STATUS},
-                "strftime('%j',date)" + "=? AND strftime('%Y',date)"+"=?" +"AND status='0'" ,
-                new String[]{String.valueOf(dayNumber),String.valueOf(year)},MonetaryTable.COLUMN_ID
-                , null, MonetaryTable.COLUMN_DATE +" DESC ",null);
+        int dayNumber = calendar.get(Calendar.DAY_OF_YEAR);
+        int year = calendar.get(Calendar.YEAR);
+        Cursor cursor = db.query(MonetaryTable.TABLE_MONETARY,
+                new String[]{MonetaryTable.COLUMN_ID, MonetaryTable.COLUMN_CATEGORY,
+                        MonetaryTable.COLUMN_AMOUNT, MonetaryTable.COLUMN_NOTES,
+                        MonetaryTable.COLUMN_DATE, MonetaryTable.COLUMN_RULE,
+                        MonetaryTable.COLUMN_TYPE, MonetaryTable.COLUMN_STATUS},
+                "strftime('%j',date)" + "=? AND strftime('%Y',date)" + "=?" + "AND status='0'",
+                new String[]{String.valueOf(dayNumber), String.valueOf(year)}, MonetaryTable.COLUMN_ID
+                , null, MonetaryTable.COLUMN_DATE + " DESC ", null);
 
-        if(cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             do {
                 Money money = new Money();
                 money.setMoney_id(cursor.getLong(cursor.getColumnIndex(MonetaryTable.COLUMN_ID)));
@@ -670,7 +684,7 @@ public class MyMonetaryContentProvider extends ContentProvider {
                 money.setType(cursor.getString(cursor.getColumnIndex(MonetaryTable.COLUMN_TYPE)));
                 money.setStatus(cursor.getInt(cursor.getColumnIndex(MonetaryTable.COLUMN_STATUS)));
                 moneyList.add(money);
-            }while (cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
         if (cursor != null && !cursor.isClosed()) {
             cursor.close();
@@ -678,25 +692,40 @@ public class MyMonetaryContentProvider extends ContentProvider {
         return moneyList;
     }
 
-    public void updateStatus(Money money){
-        ContentValues cv=new ContentValues();
+    public boolean updateStatus(Money money, Context context) {
+        double amount;
+        Balance balance;
+
+        ContentValues cv = new ContentValues();
         cv.put(MonetaryTable.COLUMN_STATUS, "1");
-        String where="_id="+money.getMoney_id();
-        db.update(MonetaryTable.TABLE_MONETARY,cv,where,null);
-        updateBalance(money.getAmount(),money.getDate());
+        String where = "_id=" + money.getMoney_id();
+        db.update(MonetaryTable.TABLE_MONETARY, cv, where, null);
+
+
+
+            balance = getSavedBalance(context);
+            if (money.getType().equals("Income")) {
+                balance.setAmount(balance.getAmount() + money.getAmount());
+
+            }else if(money.getType().equals("Expense")){
+                balance.setAmount(balance.getAmount()- money.getAmount());
+            }
+            return updateBalance(balance.getAmount(), money.getDate());
+
+
 
     }
 
-    public ArrayList<Money> getExpensesForPeriod(Date date1,Date date2){
-        ArrayList<Money> expenses=new ArrayList<>();
-        Cursor cursor=db.query(MonetaryTable.TABLE_MONETARY,
-                new String[]{MonetaryTable.COLUMN_ID,MonetaryTable.COLUMN_CATEGORY,
-                MonetaryTable.COLUMN_AMOUNT,MonetaryTable.COLUMN_NOTES,
-                MonetaryTable.COLUMN_DATE,MonetaryTable.COLUMN_RULE,
-                MonetaryTable.COLUMN_TYPE,MonetaryTable.COLUMN_STATUS},MonetaryTable.COLUMN_DATE+" BETWEEN ? AND ? AND type='Expense' ",
-                new String[]{service_.getStringFromDate(date1),service_.getStringFromDate(date2)},null,null,null);
+    public ArrayList<Money> getExpensesForPeriod(Date date1, Date date2) {
+        ArrayList<Money> expenses = new ArrayList<>();
+        Cursor cursor = db.query(MonetaryTable.TABLE_MONETARY,
+                new String[]{MonetaryTable.COLUMN_ID, MonetaryTable.COLUMN_CATEGORY,
+                        MonetaryTable.COLUMN_AMOUNT, MonetaryTable.COLUMN_NOTES,
+                        MonetaryTable.COLUMN_DATE, MonetaryTable.COLUMN_RULE,
+                        MonetaryTable.COLUMN_TYPE, MonetaryTable.COLUMN_STATUS}, MonetaryTable.COLUMN_DATE + " BETWEEN ? AND ? AND type='Expense' ",
+                new String[]{service_.getStringFromDate(date1), service_.getStringFromDate(date2)}, null, null, null);
 
-        if(cursor.moveToFirst()){
+        if (cursor.moveToFirst()) {
             do {
                 Money money = new Money();
                 money.setMoney_id(cursor.getLong(cursor.getColumnIndex(MonetaryTable.COLUMN_ID)));
@@ -714,33 +743,88 @@ public class MyMonetaryContentProvider extends ContentProvider {
                 money.setType(cursor.getString(cursor.getColumnIndex(MonetaryTable.COLUMN_TYPE)));
                 money.setStatus(cursor.getInt(cursor.getColumnIndex(MonetaryTable.COLUMN_STATUS)));
                 expenses.add(money);
-            }while (cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
         if (cursor != null && !cursor.isClosed()) {
             cursor.close();
         }
-
 
 
         return expenses;
     }
 
-    public double getAmountMonth(int month,int year ,Category category){
-        double amount=0;
+    public double getAmountMonth(int month, int year, Category category) {
+        String monthS;
+        double amount = 0;
+        if(month<10){
+            monthS="0"+month;
+        }else{
+            monthS=String.valueOf(month);
+        }
 
-        Cursor cursor= db.query(MonetaryTable.TABLE_MONETARY,new String[]{"sum(amount)"},
-                "type='Expense' AND strftime('%m',date)=? AND strftime('%Y',date)=? ",new String []{ String.valueOf(month),String.valueOf(year)},null,null,null);
-        Log.w("HELLO AMOUNT",""+cursor.getCount());
-        if(cursor.moveToFirst()){
+        Cursor cursor = db.query(MonetaryTable.TABLE_MONETARY, new String[]{"sum(amount)"},
+                "type='Expense' AND strftime('%m',date)=? AND strftime('%Y',date)=? AND category=?", new String[]{monthS, String.valueOf(year), String.valueOf(category.getCategory_id())}, null, null, null);
+        Log.w("HELLO AMOUNT", "" + cursor.getCount());
+        if (cursor.moveToFirst()) {
             do {
-                amount=cursor.getDouble(0);
-                Log.w("Hello Amount ",""+amount);
-            }while (cursor.moveToNext());
+                amount = cursor.getDouble(0);
+                Log.w("Hello Amount ", "" + amount);
+            } while (cursor.moveToNext());
         }
         if (cursor != null && !cursor.isClosed()) {
             cursor.close();
         }
 
-    return amount;
+        return amount;
     }
+
+    public boolean updateOnPostpone(Money money) {
+
+        try {
+            long id = money.getMoney_id();
+            String updateDate = service_.getStringFromDate(service_.getUpdateDate(money.getDate()));
+            ContentValues cv = new ContentValues();
+            cv.put(MonetaryTable.COLUMN_AMOUNT, money.getAmount());
+            cv.put(MonetaryTable.COLUMN_DATE, updateDate);
+            cv.put(MonetaryTable.COLUMN_NOTES, money.getNotes());
+            return db.update(MonetaryTable.TABLE_MONETARY, cv, "_id=" + id, null)>0;
+        } catch (Exception ex) {
+            return false;
+        }
+
+
+    }
+
+    public boolean deleteIncExp(Money money) {
+
+        Log.w("Deleted item ","money"+money.getMoney_id());
+        long delId = money.getMoney_id();
+        return db.delete(MonetaryTable.TABLE_MONETARY, "_id=" + delId, null) > 0;
+    }
+
+    public long getMoneyIdFromDB(Money money){
+
+        long retrunId=0;
+        Cursor cursor = db.query(MonetaryTable.TABLE_MONETARY,
+                new String[]{MonetaryTable.COLUMN_ID, MonetaryTable.COLUMN_CATEGORY,
+                        MonetaryTable.COLUMN_AMOUNT, MonetaryTable.COLUMN_NOTES,
+                        MonetaryTable.COLUMN_DATE, MonetaryTable.COLUMN_RULE,
+                        MonetaryTable.COLUMN_TYPE, MonetaryTable.COLUMN_STATUS}, MonetaryTable.COLUMN_DATE + "=? AND status=0 AND type=? AND amount=? AND category=?",
+                new String[]{service_.getStringFromDate(money.getDate()), money.getType(), String.valueOf(money.getAmount()),String.valueOf(money.getCategory())}, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+
+                retrunId=cursor.getLong(cursor.getColumnIndex(MonetaryTable.COLUMN_ID));
+
+            } while (cursor.moveToNext());
+        }
+        if (cursor != null && !cursor.isClosed()) {
+            cursor.close();
+        }
+        Log.w("Money id",""+retrunId);
+        return  retrunId;
+
+    }
+
 }

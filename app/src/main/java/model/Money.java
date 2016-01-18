@@ -91,14 +91,6 @@ public class Money implements Parcelable {
 		this.type = type;
 	}
 
-//	public long getCategory_id() {
-//		return category_id;
-//	}
-//
-//	public void setCategory_id(long category_id) {
-//		this.category_id = category_id;
-//	}
-
 	public int getStatus() {
 		return status;
 	}
@@ -110,7 +102,7 @@ public class Money implements Parcelable {
 	//Parcelable part
 
 	public Money(Parcel in){
-
+		this.money_id=in.readLong();
 		this.category_id = in.readLong();
 		this.amount = in.readDouble();
 		this.notes = in.readString();
@@ -127,7 +119,7 @@ public class Money implements Parcelable {
 
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
-
+		dest.writeLong(this.money_id);
 		dest.writeLong(this.category_id);
 		dest.writeDouble(this.amount);
 		dest.writeString(this.notes);
