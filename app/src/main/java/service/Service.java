@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -352,12 +351,10 @@ public class Service {
             money.setStatus(0);
 
 
-
             AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
             contentProvider.createIncomeExpense(money, context);
             money.setMoney_id(contentProvider().getMoneyIdFromDB(money));
-
 
 
             Intent intent = new Intent(context, AlarmReceiver.class);
@@ -368,32 +365,31 @@ public class Service {
             alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
 
 
-
-
-
-
-
         } catch (Exception ex) {
             Toast toast = Toast.makeText(context, ex + " ", Toast.LENGTH_LONG);
         }
 
 
     }
-    public void postponeAlarm(Context context, Money money, int hour, int minute){
-        Log.w("Postpone Alarm",""+money.getDate().toString()+"////"+hour+":"+minute);
-        Calendar calendar = Calendar.getInstance();
-        Date dat = money.getDate();
-        calendar.setTime(dat);
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, minute);
-        AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        Intent intent = new Intent(context, AlarmReceiver.class);
-        intent.putExtra("Money", money);
-        intent.putExtra("hour", hour);
-        intent.putExtra("minute", minute);
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-        alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+    public void postponeAlarm(Context context, Money money, int hour, int minute) {
+        try {
+            Calendar calendar = Calendar.getInstance();
+            Date dat = money.getDate();
+            calendar.setTime(dat);
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minute);
+            AlarmManager alarmMgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+            Intent intent = new Intent(context, AlarmReceiver.class);
+            intent.putExtra("Money", money);
+            intent.putExtra("hour", hour);
+            intent.putExtra("minute", minute);
+            PendingIntent alarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+            alarmMgr.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), alarmIntent);
+        } catch (Exception ex) {
+            Toast toast = Toast.makeText(context, ex + " ", Toast.LENGTH_LONG);
+        }
     }
 
 
@@ -409,7 +405,7 @@ public class Service {
             String date = getStringFromDate(money.getDate());
             Uri sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             Intent nextIntent = new Intent(context, MainActivity.class);
-            nextIntent.addFlags( Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            nextIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             nextIntent.putExtra("Money", money);
             nextIntent.putExtra("hour", hour);
             nextIntent.putExtra("minute", minute);
@@ -423,8 +419,6 @@ public class Service {
             builder.setContentIntent(pIntent);
             builder.setAutoCancel(true);
             builder.setSound(sound);
-
-
 
 
             NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -442,16 +436,16 @@ public class Service {
         contentProvider.createIncomeExpense(money, context);
         Balance balance;
 
-            balance = contentProvider.getSavedBalance(context);
-            if (money.getType().equals("Income")) {
-                balance.setAmount(balance.getAmount() + money.getAmount());
+        balance = contentProvider.getSavedBalance(context);
+        if (money.getType().equals("Income")) {
+            balance.setAmount(balance.getAmount() + money.getAmount());
 
-            } else if (money.getType().equals("Expense")) {
-                balance.setAmount(balance.getAmount() - money.getAmount());
-            }
-            contentProvider.updateBalance(balance.getAmount(), money.getDate());
+        } else if (money.getType().equals("Expense")) {
+            balance.setAmount(balance.getAmount() - money.getAmount());
+        }
+        double finBalance = Math.floor(balance.getAmount() * 100) / 100;
 
-
+        contentProvider.updateBalance(finBalance, money.getDate());
 
 
     }
@@ -621,8 +615,11 @@ public class Service {
         lv.setAdapter(adapter);
 
         for (Money m : list) {
+
             if (m.getType().equals(type)) {
+
                 returnList.add(m);
+
                 adapter.notifyDataSetChanged();
             }
         }
@@ -685,7 +682,7 @@ public class Service {
                     pg.setPadding(5);
 
                 }
-                setSlice(pg,text,0);
+                setSlice(pg, text, 0);
 
                 final Activity activ = activity;
 
@@ -695,7 +692,7 @@ public class Service {
                     public void onClick(int index) {
 
                         if (index != -1) {
-                           setSlice(pg,text,index);
+                            setSlice(pg, text, index);
                         }
 
                     }
@@ -775,18 +772,18 @@ public class Service {
         calAfter.setTime(dateAfter);
 
         if (calBefore.compareTo(substractWeek(calAfter)) == 0) {
-            Log.w("Period", "Week");
+
             period = "week";
         }
         calAfter.setTime(dateAfter);
         if (calBefore.compareTo(substractMonth(calAfter)) == 0) {
-            Log.w("Period", "Month");
+
             period = "month";
 
         }
         calAfter.setTime(dateAfter);
         if (calBefore.compareTo(substractYear(calAfter)) == 0) {
-            Log.w("Period", "Year");
+
             period = "year";
         }
 
@@ -942,7 +939,8 @@ public class Service {
         }
 
     }
-    private void setSlice(PieGraph pg,TextView text,int index){
+
+    private void setSlice(PieGraph pg, TextView text, int index) {
         String value = Float.toString(pg.getSlice(index)
                 .getValue());
         String title = pg.getSlice(index).getTitle()
@@ -956,7 +954,6 @@ public class Service {
 
         text.setGravity(Gravity.CENTER_HORIZONTAL);
     }
-
 
 
 }

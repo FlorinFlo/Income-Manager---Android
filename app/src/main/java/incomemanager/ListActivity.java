@@ -22,22 +22,22 @@ public class ListActivity extends ActionBarActivity {
     private ActionBar actionBar;
     private String scope;
     private String duration;
-    private Service service= Service.getInstance();
+    private Service service = Service.getInstance();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
-        Intent intent=getIntent();
-        scope=intent.getStringExtra("scope");
-        duration=intent.getStringExtra("duration");
+        Intent intent = getIntent();
+        scope = intent.getStringExtra("scope");
+        duration = intent.getStringExtra("duration");
 
-        ListView lv= (ListView) findViewById(R.id.list_money);
+        ListView lv = (ListView) findViewById(R.id.list_money);
         service.populateMoneyList(this, scope, duration, lv);
-        if(scope.equals("Income")){
+        if (scope.equals("Income")) {
             setTitle("Incomes");
-        }else{
+        } else {
             setTitle("Expenses");
         }
 
@@ -45,7 +45,7 @@ public class ListActivity extends ActionBarActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
 
         actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#606060")));

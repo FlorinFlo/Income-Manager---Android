@@ -9,11 +9,13 @@ public class Balance {
     private double amount;
     private Date balanceDate;
 
-    public Balance(double amount,Date balanceDate){
-        this.amount=amount;
-        this.balanceDate=balanceDate;
+    public Balance(double amount, Date balanceDate) {
+        this.amount = amount;
+        this.balanceDate = balanceDate;
     }
-    public Balance(){}
+
+    public Balance() {
+    }
 
     public double getAmount() {
         return amount;

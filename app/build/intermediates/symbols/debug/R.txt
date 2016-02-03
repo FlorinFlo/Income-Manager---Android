@@ -408,7 +408,7 @@ int id action_settings 0x7f0c00b2
 int id activity_chooser_view_content 0x7f0c0023
 int id add_cat 0x7f0c007a
 int id always 0x7f0c0018
-int id amount 0x7f0c0092
+int id amount 0x7f0c0093
 int id bar_category 0x7f0c008c
 int id bar_graph 0x7f0c008d
 int id beginning 0x7f0c0015
@@ -449,7 +449,7 @@ int id categoryName 0x7f0c0096
 int id checkbox 0x7f0c002b
 int id collapseActionView 0x7f0c0019
 int id current_balance 0x7f0c005b
-int id date 0x7f0c0091
+int id date 0x7f0c0092
 int id date_after 0x7f0c0088
 int id date_before 0x7f0c0085
 int id decor_content_parent 0x7f0c0031
@@ -477,7 +477,7 @@ int id horizontal 0x7f0c0013
 int id icon 0x7f0c0028
 int id ifRoom 0x7f0c001a
 int id image 0x7f0c0025
-int id img_btn 0x7f0c0093
+int id img_btn 0x7f0c008f
 int id left_drawer 0x7f0c0047
 int id listMode 0x7f0c0009
 int id list_item 0x7f0c0027
@@ -493,7 +493,7 @@ int id normal 0x7f0c000a
 int id not_amount 0x7f0c009e
 int id not_info 0x7f0c009c
 int id not_notes 0x7f0c009f
-int id note 0x7f0c0090
+int id note 0x7f0c0091
 int id notes 0x7f0c00a7
 int id np 0x7f0c00a4
 int id opacityBar 0x7f0c0099
@@ -541,7 +541,7 @@ int id stats_per_period 0x7f0c0080
 int id submit_area 0x7f0c003e
 int id svbar 0x7f0c0098
 int id tabMode 0x7f0c000b
-int id tableRow1 0x7f0c008f
+int id tableRow1 0x7f0c0090
 int id tabs 0x7f0c0045
 int id text_amount 0x7f0c009d
 int id text_category 0x7f0c0054

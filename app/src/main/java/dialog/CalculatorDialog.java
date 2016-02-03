@@ -2,12 +2,12 @@ package dialog;
 
 import android.app.DialogFragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.incomemanager.R;
 
@@ -24,8 +24,6 @@ public class CalculatorDialog extends DialogFragment implements View.OnClickList
     private String operator1 = null;
     private Double operand1 = 0.0;
     private Double operand2 = 0.0;
-
-
 
 
     public CalculatorDialog() {
@@ -182,7 +180,7 @@ public class CalculatorDialog extends DialogFragment implements View.OnClickList
                         operand2 = Double.valueOf(displayText.
                                 substring(displayText.lastIndexOf(operator1) + 1, displayText.length()));
                     } catch (NumberFormatException ex) {
-                        Log.w("Exception", ex);
+                        Toast toast = Toast.makeText(getActivity(), ex + " ", Toast.LENGTH_LONG);
                         operand2 = null;
                     }
 
@@ -219,7 +217,7 @@ public class CalculatorDialog extends DialogFragment implements View.OnClickList
                         operand1 = result;
                         operand2 = null;
 
-                    }else{
+                    } else {
                         display.setText(display.getText().
                                 delete(display.getText().length() - 1, display.getText().length()));
                         switch (v.getId()) {
@@ -300,7 +298,7 @@ public class CalculatorDialog extends DialogFragment implements View.OnClickList
             });
 
         } catch (Exception ex) {
-            Log.w("Problem", "On click" + ex);
+            Toast toast = Toast.makeText(getActivity(), ex + " ", Toast.LENGTH_LONG);
         }
     }
 

@@ -2,7 +2,6 @@ package dialog;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,9 +23,8 @@ public class NewCategoryDialog extends Dialog implements ColorPicker.OnColorChan
     private SVBar svBar;
     private ColorPicker picker;
     private OpacityBar opacityBar;
-    private Button btnOk,btnCancel;
-    private Service service=Service.getInstance();
-   // private MyMonetaryContentProvider contentProvider=new MyMonetaryContentProvider();
+    private Button btnOk, btnCancel;
+    private Service service = Service.getInstance();
     private String categoryColor;
 
     public NewCategoryDialog(final Context context, final Spinner spinner) {
@@ -34,10 +32,10 @@ public class NewCategoryDialog extends Dialog implements ColorPicker.OnColorChan
         this.setContentView(R.layout.new_cat_dialog);
         this.setTitle("New Category");
         newCategoryText = (EditText) findViewById(R.id.categoryName);
-        picker= (ColorPicker) findViewById(R.id.picker);
-        svBar= (SVBar) findViewById(R.id.svbar);
-        opacityBar= (OpacityBar) findViewById(R.id.opacityBar);
-        btnOk= (Button) findViewById(R.id.cat_OK);
+        picker = (ColorPicker) findViewById(R.id.picker);
+        svBar = (SVBar) findViewById(R.id.svbar);
+        opacityBar = (OpacityBar) findViewById(R.id.opacityBar);
+        btnOk = (Button) findViewById(R.id.cat_OK);
         btnCancel = (Button) findViewById(R.id.cat_Cancel);
         picker.addSVBar(svBar);
         picker.addOpacityBar(opacityBar);
@@ -47,12 +45,12 @@ public class NewCategoryDialog extends Dialog implements ColorPicker.OnColorChan
         btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(spinner==null){
-                    boolean newCategory = service.contentProvider().createNewCategory(newCategoryText.getText().toString(), categoryColor,context);
-                }else{
-                    boolean newCategory = service.contentProvider().createNewCategory(newCategoryText.getText().toString(), categoryColor,context);
-                    Log.w("",""+newCategory);
-                    service.populateSpinnerCategory(spinner,context);
+                if (spinner == null) {
+                    boolean newCategory = service.contentProvider().createNewCategory(newCategoryText.getText().toString(), categoryColor, context);
+                } else {
+                    boolean newCategory = service.contentProvider().createNewCategory(newCategoryText.getText().toString(), categoryColor, context);
+
+                    service.populateSpinnerCategory(spinner, context);
                 }
 
                 dismiss();
@@ -75,6 +73,6 @@ public class NewCategoryDialog extends Dialog implements ColorPicker.OnColorChan
     public void onColorChanged(int color) {
         newCategoryText.setHintTextColor(color);
         newCategoryText.setTextColor(color);
-        categoryColor=service.returnHexColorFromInt(color);
+        categoryColor = service.returnHexColorFromInt(color);
     }
 }

@@ -22,7 +22,6 @@ import model.Category;
 import service.Service;
 
 
-
 /**
  * Created by Florea on 10/21/2015.
  */
@@ -33,7 +32,6 @@ public class Expenses_List_Fragment extends Fragment {
     private String periodChart = "week";
     private Date date1;
     private Date date2;
-
 
 
     @Override
@@ -61,13 +59,11 @@ public class Expenses_List_Fragment extends Fragment {
         period.setSelection(1);
 
 
-
         final RadioButton radioCategory = (RadioButton) getActivity().findViewById(R.id.stats_category);
         final RadioButton radioPeriod = (RadioButton) getActivity().findViewById(R.id.stats_per_period);
 
 
         RadioGroup radioGroup = (RadioGroup) getActivity().findViewById(R.id.radio_group);
-
 
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -78,7 +74,7 @@ public class Expenses_List_Fragment extends Fragment {
 
             }
         });
-        View.OnClickListener first=new View.OnClickListener() {
+        View.OnClickListener first = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 service.openCategoryList(getActivity());
@@ -177,9 +173,9 @@ public class Expenses_List_Fragment extends Fragment {
             spinner.setSelection(0);
         } else if (stringPeriod.equals("month")) {
             spinner.setSelection(1);
-        }else if(stringPeriod.equals("year")){
+        } else if (stringPeriod.equals("year")) {
             spinner.setSelection(2);
-        }else{
+        } else {
             spinner.setSelection(3);
         }
 
@@ -189,9 +185,6 @@ public class Expenses_List_Fragment extends Fragment {
         date1 = service.getDateFromString(dateBefore.getText().toString());
         date2 = service.getDateFromString(dateAfter.getText().toString());
     }
-
-
-
 
 
 }

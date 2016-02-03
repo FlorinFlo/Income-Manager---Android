@@ -9,8 +9,10 @@
         android:layout_alignParentLeft="true"
         android:layout_marginRight="5dip">
         <ImageButton
+            android:id="@+id/img_btn"
             android:layout_width="100dip"
             android:layout_height="100dip"/>
+
     </LinearLayout>
    <TableLayout
        android:layout_width="match_parent"

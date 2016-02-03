@@ -5,7 +5,6 @@ import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,107 +25,102 @@ import java.util.Date;
 import service.Service;
 
 public class Salary_Fragment extends Fragment {
-	
-	
-	private EditText dateField;
-	private EditText repeat;
-	private Switch repeatSwitch;
-	private ToggleButton togggle;
-	private Spinner spinnerCat;
-	private TextView timeNow;
-	private int counter = 0;
-	private int hour;
-	private int minute;
-	private Calendar calendar;
-	private boolean repeatAlarm=false;
-	private OnDataPass dataPass;
 
-	
-	private Service service=Service.getInstance();
-	//private NumberPicker no;
-	
-	@Override
+
+    private EditText dateField;
+    private EditText repeat;
+    private Switch repeatSwitch;
+    private ToggleButton togggle;
+    private Spinner spinnerCat;
+    private TextView timeNow;
+    private int counter = 0;
+    private int hour;
+    private int minute;
+    private Calendar calendar;
+    private boolean repeatAlarm = false;
+    private OnDataPass dataPass;
+
+
+    private Service service = Service.getInstance();
+    //private NumberPicker no;
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-        Bundle savedInstanceState) {
-		getActivity().getWindow().setSoftInputMode(
-				WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        return inflater.inflate(R.layout.salary_fragment,container,false);
+                             Bundle savedInstanceState) {
+        getActivity().getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        return inflater.inflate(R.layout.salary_fragment, container, false);
     }
-	
-	@Override
-	public void onStart() {
-		counter=0;
-		timeNow= (TextView) getView().findViewById(R.id.time_now);
-		service.setTime(timeNow,service.getTimeNow(calendar)[0], service.getTimeNow(calendar)[1]);
-		dateField=(EditText)getView().findViewById(R.id.salary_date);
-		service.initiateDate(dateField, getActivity(),new Date());
-		togggle= (ToggleButton) getView().findViewById(R.id.toggle_repeat);
 
-		togggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				Log.w("Check",""+counter);
-				counter++;
-				if(counter%2!=0){
+    @Override
+    public void onStart() {
+        counter = 0;
+        timeNow = (TextView) getView().findViewById(R.id.time_now);
+        service.setTime(timeNow, service.getTimeNow(calendar)[0], service.getTimeNow(calendar)[1]);
+        dateField = (EditText) getView().findViewById(R.id.salary_date);
+        service.initiateDate(dateField, getActivity(), new Date());
+        togggle = (ToggleButton) getView().findViewById(R.id.toggle_repeat);
 
+        togggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-					repeatAlarm=true;
-
-					TimePickerDialog timePicker=new TimePickerDialog(getActivity(),new TimePickerDialog.OnTimeSetListener(){
-
-						@Override
-						public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-							service.setTime(timeNow, hourOfDay, minute);
-							dataPass.onTimePass(hourOfDay,minute);
-
-						}
-
-					},service.getTimeNow(calendar)[0],service.getTimeNow(calendar)[1],true);
-					timePicker.setTitle("Select time");
-					timePicker.setOnCancelListener(new DialogInterface.OnCancelListener() {
-						@Override
-						public void onCancel(DialogInterface dialog) {
+                counter++;
+                if (counter % 2 != 0) {
 
 
-							togggle.setChecked(false);
-						}
-					});
-					timePicker.show();
-					dataPass.onDataPass(repeatAlarm);
+                    repeatAlarm = true;
+
+                    TimePickerDialog timePicker = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
+
+                        @Override
+                        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                            service.setTime(timeNow, hourOfDay, minute);
+                            dataPass.onTimePass(hourOfDay, minute);
+
+                        }
+
+                    }, service.getTimeNow(calendar)[0], service.getTimeNow(calendar)[1], true);
+                    timePicker.setTitle("Select time");
+                    timePicker.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
 
 
-				}else{
-
-					repeatAlarm=false;
-					dataPass.onDataPass(repeatAlarm);
-
-					service.setTime(timeNow, service.getTimeNow(calendar)[0], service.getTimeNow(calendar)[1]);
-				}
+                            togggle.setChecked(false);
+                        }
+                    });
+                    timePicker.show();
+                    dataPass.onDataPass(repeatAlarm);
 
 
-			}
-		});
+                } else {
+
+                    repeatAlarm = false;
+                    dataPass.onDataPass(repeatAlarm);
+
+                    service.setTime(timeNow, service.getTimeNow(calendar)[0], service.getTimeNow(calendar)[1]);
+                }
 
 
+            }
+        });
 
 
-		
-		
-		super.onStart();
-	}
+        super.onStart();
+    }
 
 
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		dataPass= (OnDataPass) activity;
-	}
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        dataPass = (OnDataPass) activity;
+    }
 
-	public interface OnDataPass
-	{
-		public void onDataPass(boolean data);
+    public interface OnDataPass {
+        public void onDataPass(boolean data);
 
-		public void onTimePass(int hour,int minute);
+        public void onTimePass(int hour, int minute);
 
-	}
+    }
 }

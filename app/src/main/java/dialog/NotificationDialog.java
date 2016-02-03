@@ -42,8 +42,8 @@ public class NotificationDialog extends DialogFragment implements View.OnClickLi
     private Button delete;
     private Service service = Service.getInstance();
     private DateFormat dateFormater = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-    private int hour=-1;
-    private int minutes=0;
+    private int hour = -1;
+    private int minutes = 0;
 
     public NotificationDialog() {
 
@@ -53,7 +53,7 @@ public class NotificationDialog extends DialogFragment implements View.OnClickLi
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.notification_dialog, container);
         getDialog().setTitle("Notification");
-        money=getArguments().getParcelable("Money");
+        money = getArguments().getParcelable("Money");
         initiate(view);
 
         return view;
@@ -68,7 +68,7 @@ public class NotificationDialog extends DialogFragment implements View.OnClickLi
         delete = (Button) view.findViewById(R.id.delete);
         title.setText("You have an " + money.getType() + " due");
         amount.setText(String.valueOf(money.getAmount()));
-         notes.setText(money.getNotes());
+        notes.setText(money.getNotes());
         try {
             post.setOnClickListener(this);
             paid.setOnClickListener(this);
@@ -112,26 +112,20 @@ public class NotificationDialog extends DialogFragment implements View.OnClickLi
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
 
 
-
-
-
-
-
-
                 break;
             case R.id.paid:
 
-                if(service.contentProvider().updateStatus(money,getActivity())){
-                    Log.w("Paid","Yes");
-                    Toast toast=Toast.makeText(getActivity(), "The record of this amount has been marked as paid",
+                if (service.contentProvider().updateStatus(money, getActivity())) {
+                    Log.w("Paid", "Yes");
+                    Toast toast = Toast.makeText(getActivity(), "The record of this amount has been marked as paid",
                             Toast.LENGTH_LONG);
                     toast.show();
                     getDialog().dismiss();
 
 
-                }else{
-                    Log.w("Paid","No");
-                    Toast toast=Toast.makeText(getActivity(), "There has been a problem in deleting the record",
+                } else {
+                    Log.w("Paid", "No");
+                    Toast toast = Toast.makeText(getActivity(), "There has been a problem in deleting the record",
                             Toast.LENGTH_LONG);
                     toast.show();
 
@@ -139,13 +133,13 @@ public class NotificationDialog extends DialogFragment implements View.OnClickLi
 
                 break;
             case R.id.delete:
-                if(service.contentProvider().deleteIncExp(money)){
+                if (service.contentProvider().deleteIncExp(money)) {
                     Toast toast = Toast
                             .makeText(getActivity(), "The record of this amount has been deleted",
                                     Toast.LENGTH_LONG);
                     toast.show();
                     getDialog().dismiss();
-                }else {
+                } else {
                     Toast toast = Toast
                             .makeText(getActivity(), "There has been a problem with the deletion of the record",
                                     Toast.LENGTH_LONG);
@@ -156,7 +150,7 @@ public class NotificationDialog extends DialogFragment implements View.OnClickLi
         }
     }
 
-    private void pickTime(){
+    private void pickTime() {
         Calendar calendar = Calendar.getInstance();
         TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(), new TimePickerDialog.OnTimeSetListener() {
 
@@ -164,12 +158,12 @@ public class NotificationDialog extends DialogFragment implements View.OnClickLi
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 hour = hourOfDay;
                 minutes = minute;
-                if(hour!=-1){
-                    final AlertDialog.Builder alertDialog=new AlertDialog.Builder(getActivity());
-                    if(minutes<0){
-                        alertDialog.setMessage("You have postponed the notification on the "+money.getDate().toString()+" at the hour "+hour+":0"+minutes);
-                    }else {
-                        alertDialog.setMessage("You have postponed the notification on the "+money.getDate().toString()+" at the hour "+hour+":"+minutes);
+                if (hour != -1) {
+                    final AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+                    if (minutes < 0) {
+                        alertDialog.setMessage("You have postponed the notification on the " + money.getDate().toString() + " at the hour " + hour + ":0" + minutes);
+                    } else {
+                        alertDialog.setMessage("You have postponed the notification on the " + money.getDate().toString() + " at the hour " + hour + ":" + minutes);
                     }
 
                     alertDialog.setPositiveButton("yes", new DialogInterface.OnClickListener() {
@@ -191,7 +185,7 @@ public class NotificationDialog extends DialogFragment implements View.OnClickLi
                         }
                     });
 
-                    AlertDialog alert=alertDialog.create();
+                    AlertDialog alert = alertDialog.create();
                     alert.show();
                 }
 

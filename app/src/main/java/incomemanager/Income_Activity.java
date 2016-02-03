@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,11 +46,9 @@ public class Income_Activity extends ActionBarActivity implements Salary_Fragmen
         setContentView(R.layout.activity_income);
 
 
-            mPager = (ViewPager) findViewById(R.id.pager_income);
-            mPager.setAdapter(new MyFragmentPageAdapter(
-                    getSupportFragmentManager(), tabTitle, this));
-
-
+        mPager = (ViewPager) findViewById(R.id.pager_income);
+        mPager.setAdapter(new MyFragmentPageAdapter(
+                getSupportFragmentManager(), tabTitle, this));
 
 
     }
@@ -60,7 +57,7 @@ public class Income_Activity extends ActionBarActivity implements Salary_Fragmen
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
 
-            getMenuInflater().inflate(R.menu.action_bar_save, menu);
+        getMenuInflater().inflate(R.menu.action_bar_save, menu);
 
 
         actionBar = getSupportActionBar();
@@ -104,12 +101,12 @@ public class Income_Activity extends ActionBarActivity implements Salary_Fragmen
                         category = (Category) spiner_cat.getSelectedItem();
                         rule = "1";// one time income "Other income"
 
-                        if(category.getCategory_id()==-1){
-                           Toast toast = Toast
+                        if (category.getCategory_id() == -1) {
+                            Toast toast = Toast
                                     .makeText(this, "Please choose a category",
                                             Toast.LENGTH_LONG);
                             toast.show();
-                        }else{
+                        } else {
                             Money money = new Money(category.getCategory_id(), Double.parseDouble(amount), notes, service.getDateFromString(date), rule, "Income", 1);
 
                             service.addIncomeExpense(this, money);
@@ -118,8 +115,6 @@ public class Income_Activity extends ActionBarActivity implements Salary_Fragmen
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
                         }
-
-
 
 
                     } else {
@@ -160,7 +155,7 @@ public class Income_Activity extends ActionBarActivity implements Salary_Fragmen
 
                         service.addIncomeExpense(this, money);
                         if (repeatingAlarm) {
-                            Log.w("Creating minutes", "" + hour + ">>>>>>>>>" + minute);
+
                             service.createAlarm(this, money, hour, minute);
                         }
                         Intent intent = new Intent(this, MainActivity.class);
@@ -189,7 +184,7 @@ public class Income_Activity extends ActionBarActivity implements Salary_Fragmen
                 break;
 
             case android.R.id.home:
-               //TODO
+                //TODO
                 break;
 
             default:
@@ -208,7 +203,7 @@ public class Income_Activity extends ActionBarActivity implements Salary_Fragmen
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Log.w("Key back has", "??????????????????????");
+
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -219,13 +214,13 @@ public class Income_Activity extends ActionBarActivity implements Salary_Fragmen
 
     @Override
     public void onDataPass(boolean data) {
-        Log.w("PASSING DATA///////", "" + data);
+
         repeatingAlarm = data;
     }
 
     @Override
     public void onTimePass(int hour, int minute) {
-        Log.w("PASSSING TIME", "" + hour + ":" + minute);
+
         this.hour = hour;
         this.minute = minute;
     }

@@ -18,11 +18,11 @@ public class Tools_Fragment extends Fragment {
                              Bundle savedInstanceState) {
         getActivity().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-        return inflater.inflate(R.layout.tools_fragment,container,false);
+        return inflater.inflate(R.layout.tools_fragment, container, false);
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
 
     }

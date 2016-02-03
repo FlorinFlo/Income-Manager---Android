@@ -6,29 +6,29 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class MonetaryDatabaseHelper extends SQLiteOpenHelper {
 
-	private static final String DATABASE_NAME = "monetarytable.db";
+    private static final String DATABASE_NAME = "monetarytable.db";
 
-	private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 1;
 
-	public MonetaryDatabaseHelper(Context context) {
-		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    public MonetaryDatabaseHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
-	}
+    }
 
-	@Override
-	public void onCreate(SQLiteDatabase database) {
+    @Override
+    public void onCreate(SQLiteDatabase database) {
 
-		MonetaryTable.onCreate(database);
-		CategoryTable.onCreate(database);		
+        MonetaryTable.onCreate(database);
+        CategoryTable.onCreate(database);
 
-	}
+    }
 
-	@Override
-	public void onUpgrade(SQLiteDatabase database, int oldVersion,
-			int newVersion) {
-		MonetaryTable.onUpgrade(database, oldVersion, newVersion);
-		CategoryTable.onUpgrade(database, oldVersion, newVersion);
-	}
+    @Override
+    public void onUpgrade(SQLiteDatabase database, int oldVersion,
+                          int newVersion) {
+        MonetaryTable.onUpgrade(database, oldVersion, newVersion);
+        CategoryTable.onUpgrade(database, oldVersion, newVersion);
+    }
 
 
 }

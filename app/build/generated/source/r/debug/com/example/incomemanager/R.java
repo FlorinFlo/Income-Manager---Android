@@ -1586,7 +1586,7 @@ containing a value of this type.
         public static final int activity_chooser_view_content=0x7f0c0023;
         public static final int add_cat=0x7f0c007a;
         public static final int always=0x7f0c0018;
-        public static final int amount=0x7f0c0092;
+        public static final int amount=0x7f0c0093;
         public static final int bar_category=0x7f0c008c;
         public static final int bar_graph=0x7f0c008d;
         public static final int beginning=0x7f0c0015;
@@ -1627,7 +1627,7 @@ containing a value of this type.
         public static final int checkbox=0x7f0c002b;
         public static final int collapseActionView=0x7f0c0019;
         public static final int current_balance=0x7f0c005b;
-        public static final int date=0x7f0c0091;
+        public static final int date=0x7f0c0092;
         public static final int date_after=0x7f0c0088;
         public static final int date_before=0x7f0c0085;
         public static final int decor_content_parent=0x7f0c0031;
@@ -1655,7 +1655,7 @@ containing a value of this type.
         public static final int icon=0x7f0c0028;
         public static final int ifRoom=0x7f0c001a;
         public static final int image=0x7f0c0025;
-        public static final int img_btn=0x7f0c0093;
+        public static final int img_btn=0x7f0c008f;
         public static final int left_drawer=0x7f0c0047;
         public static final int listMode=0x7f0c0009;
         public static final int list_item=0x7f0c0027;
@@ -1671,7 +1671,7 @@ containing a value of this type.
         public static final int not_amount=0x7f0c009e;
         public static final int not_info=0x7f0c009c;
         public static final int not_notes=0x7f0c009f;
-        public static final int note=0x7f0c0090;
+        public static final int note=0x7f0c0091;
         public static final int notes=0x7f0c00a7;
         public static final int np=0x7f0c00a4;
         public static final int opacityBar=0x7f0c0099;
@@ -1719,7 +1719,7 @@ containing a value of this type.
         public static final int submit_area=0x7f0c003e;
         public static final int svbar=0x7f0c0098;
         public static final int tabMode=0x7f0c000b;
-        public static final int tableRow1=0x7f0c008f;
+        public static final int tableRow1=0x7f0c0090;
         public static final int tabs=0x7f0c0045;
         public static final int text_amount=0x7f0c009d;
         public static final int text_category=0x7f0c0054;
